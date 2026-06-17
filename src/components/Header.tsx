@@ -3,9 +3,8 @@ import styles from "./Header.module.css";
 
 interface HeaderProps {
   variant: "home" | "works" | "project";
-  /** Required when variant is "project". */
+  /** Shown as an inert "Project 01 / 28" label when variant is "project". */
   projectIndex?: number;
-  /** Required when variant is "project". */
   projectTotal?: number;
 }
 
@@ -18,22 +17,13 @@ const navItems = [
 
 export default function Header({ variant, projectIndex, projectTotal }: HeaderProps) {
   const isHome = variant === "home";
+  const isWorks = variant === "works";
   const isProject = variant === "project";
 
   return (
-    <header className={`${styles.header} ${styles[variant]}`}>
-      <Link
-        href={isHome ? "#top" : "/"}
-        className={styles.wordmarkLink}
-        style={isProject ? { color: "#ffffff" } : undefined}
-      >
-        <span
-          className={`${styles.wordmark} ${
-            isHome ? styles.wordmarkHome : styles.wordmarkSub
-          }`}
-        >
-          Melanie Chlela
-        </span>
+    <header className={`${styles.header} ${styles.translucent}`}>
+      <Link href={isHome ? "#top" : "/"} className={styles.wordmarkLink}>
+        <span className={styles.wordmark}>Melanie Chlela</span>
       </Link>
 
       {isHome && (
@@ -46,22 +36,28 @@ export default function Header({ variant, projectIndex, projectTotal }: HeaderPr
         </nav>
       )}
 
-      {variant === "works" && (
-        <div className={styles.worksRight}>
-          <Link href="/" className={styles.studioLink}>
-            Studio
-          </Link>
-          <span className={styles.currentLabel}>Selected Works</span>
-        </div>
+      {isProject && projectIndex != null && projectTotal != null && (
+        <span className={styles.projectCounter}>
+          Project {String(projectIndex).padStart(2, "0")} / {projectTotal}
+        </span>
       )}
 
-      {isProject && (
-        <div className={styles.projectRight}>
-          <span className={styles.projectCounter}>
-            Project {String(projectIndex).padStart(2, "0")} / {projectTotal}
-          </span>
-        </div>
-      )}
+      <div className={styles.destinations}>
+        {isHome ? (
+          <span className={styles.currentLabel}>Studio</span>
+        ) : (
+          <Link href="/" className={styles.destinationLink}>
+            Studio
+          </Link>
+        )}
+        {isWorks ? (
+          <span className={styles.currentLabel}>Selected Works</span>
+        ) : (
+          <Link href="/works" className={styles.destinationLink}>
+            Selected Works
+          </Link>
+        )}
+      </div>
     </header>
   );
 }

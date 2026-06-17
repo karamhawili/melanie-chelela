@@ -13,6 +13,7 @@ import CursorLabel from "@/components/CursorLabel";
 import FilmGrain from "@/components/FilmGrain";
 import { projects, type Project } from "@/lib/projects";
 import { caseStudies, type Plate, type Fact, type CaseStudyContent } from "@/lib/caseStudies";
+import styles from "./page.module.css";
 
 // Flavor text matching the source's "Project 01 / 28" counter — 28 implies a
 // larger unpublished portfolio, it isn't meant to equal projects.length (6).
@@ -48,10 +49,7 @@ function FullBleedPlate({
   priority?: boolean;
 }) {
   return (
-    <figure
-      data-cursor-label={cursorLabel}
-      style={{ margin: 0, position: "relative", width: "100%", height, overflow: "hidden", background: "var(--image-bg)" }}
-    >
+    <figure data-cursor-label={cursorLabel} className={styles.fullBleedFigure} style={{ height }}>
       <Parallax src={plate.src} alt={plate.alt} priority={priority} sizes="100vw" />
       <CaptionChip fig={plate.fig} label={plate.label} style={{ left: "clamp(18px, 3vw, 34px)", bottom: 20 }} />
     </figure>
@@ -76,10 +74,7 @@ function SimplePlate({
   style?: React.CSSProperties;
 }) {
   return (
-    <figure
-      data-cursor-label={cursorLabel}
-      style={{ margin: 0, position: "relative", aspectRatio, overflow: "hidden", background: "var(--image-bg)", ...style }}
-    >
+    <figure data-cursor-label={cursorLabel} className={styles.simpleFigure} style={{ aspectRatio, ...style }}>
       <Parallax src={plate.src} alt={plate.alt} oversizeHeight={oversizeHeight} offsetTop={offsetTop} sizes={sizes} />
       <CaptionChip style={{ left: 16, bottom: 14 }}>
         {plate.fig} — {plate.label}
@@ -93,7 +88,7 @@ function withItalicPhrase(text: string, italic: string) {
   return (
     <>
       {before}
-      <span style={{ fontStyle: "italic", color: "var(--g)" }}>{italic}</span>
+      <span className={styles.italicGold}>{italic}</span>
       {after}
     </>
   );
@@ -101,7 +96,7 @@ function withItalicPhrase(text: string, italic: string) {
 
 function FactGrid({ facts, maxWidth = 440 }: { facts: Fact[]; maxWidth?: number }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px 30px", maxWidth }}>
+    <div className={styles.factGrid} style={{ maxWidth }}>
       {facts.map((fact) => (
         <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
       ))}
@@ -113,60 +108,20 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
   return (
     <>
       {/* HERO */}
-      <section style={{ padding: "clamp(92px, 12vh, 146px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px)" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1.12fr) minmax(0, 0.88fr)",
-            gap: "clamp(34px, 6vw, 96px)",
-            alignItems: "end",
-          }}
-        >
+      <section className={styles.hero}>
+        <div className={styles.heroGrid}>
           <div>
-            <ScrollReveal y={14} duration={0.9} style={{ marginBottom: "clamp(20px, 3.2vh, 34px)" }}>
+            <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
               <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={content.heroEyebrow} />
             </ScrollReveal>
-            <ScrollReveal
-              as="h1"
-              y={20}
-              duration={1.1}
-              style={{
-                margin: 0,
-                fontFamily: "var(--font-italiana), serif",
-                fontWeight: 400,
-                lineHeight: 0.92,
-                letterSpacing: "-0.01em",
-                fontSize: "clamp(44px, 7.4vw, 122px)",
-              }}
-            >
-              <span style={{ display: "block", color: "var(--ink)" }}>{content.heroTitleLine1}</span>
-              <span style={{ display: "block", color: "var(--g)", marginLeft: "0.03em" }}>
-                {content.heroTitleLine2}
-              </span>
+            <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
+              <span className={styles.heroTitleLine}>{content.heroTitleLine1}</span>
+              <span className={styles.heroTitleLineGold}>{content.heroTitleLine2}</span>
             </ScrollReveal>
           </div>
-          <ScrollReveal y={18} duration={1} delay={0.15} style={{ paddingBottom: "clamp(6px, 1.4vh, 16px)" }}>
-            <p
-              style={{
-                margin: "0 0 30px",
-                maxWidth: 430,
-                fontSize: "clamp(14px, 1.25vw, 17px)",
-                lineHeight: 1.75,
-                letterSpacing: "0.015em",
-                color: "var(--body)",
-              }}
-            >
-              {content.heroIntro}
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "20px 32px",
-                borderTop: "1px solid var(--line)",
-                paddingTop: 24,
-              }}
-            >
+          <ScrollReveal y={18} duration={1} delay={0.15} className={styles.heroIntroWrap}>
+            <p className={styles.heroIntro}>{content.heroIntro}</p>
+            <div className={styles.heroFactsGrid}>
               {content.heroFacts.map((fact) => (
                 <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
               ))}
@@ -178,62 +133,33 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       <FullBleedPlate plate={content.lead} height="clamp(440px, 90vh, 1020px)" cursorLabel="The Terrace" priority />
 
       {/* OVERVIEW */}
-      <section style={{ padding: "clamp(70px, 13vh, 150px) clamp(24px, 6vw, 90px)" }}>
-        <div
-          style={{
-            maxWidth: 1340,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.15fr)",
-            gap: "clamp(34px, 6vw, 110px)",
-            alignItems: "start",
-          }}
-        >
+      <section className={styles.overview}>
+        <div className={styles.overviewGrid}>
           <ScrollReveal y={18} duration={1}>
             <Eyebrow number="01" rule="left" label="The Project" />
-            <div style={{ marginTop: 24 }}>
+            <div className={styles.overviewFactsWrap}>
               <FactGrid facts={content.overviewFacts} />
             </div>
           </ScrollReveal>
           <ScrollReveal y={22} duration={1} delay={0.1}>
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "var(--font-italiana), serif",
-                fontWeight: 400,
-                fontSize: "clamp(28px, 3.7vw, 52px)",
-                lineHeight: 1.12,
-                letterSpacing: "-0.01em",
-                color: "var(--ink)",
-              }}
-            >
+            <h2 className={styles.overviewStatement}>
               {withItalicPhrase(content.overviewStatement, content.overviewStatementItalic)}
             </h2>
-            <p style={{ margin: "30px 0 0", maxWidth: 560, fontSize: 13.5, lineHeight: 1.95, color: "var(--body)" }}>
-              {content.overviewBody}
-            </p>
+            <p className={styles.overviewBody}>{content.overviewBody}</p>
           </ScrollReveal>
         </div>
       </section>
 
       {/* THRESHOLD */}
-      <section style={{ padding: "clamp(20px, 4vh, 60px) clamp(24px, 6vw, 90px) clamp(70px, 12vh, 140px)" }}>
-        <div style={{ maxWidth: 1340, margin: "0 auto" }}>
+      <section className={styles.threshold}>
+        <div className={styles.thresholdInner}>
           <ScrollReveal
             y={16}
             duration={0.9}
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-between",
-              gap: 20,
-              marginBottom: 26,
-            }}
+            className={`${styles.sectionHeaderRow} ${styles.thresholdHeader}`}
           >
             <Eyebrow number="02" rule="left" label="The Threshold" />
-            <span style={{ fontSize: 9.5, letterSpacing: "0.2em", color: "var(--meta)", textTransform: "uppercase" }}>
-              Drag — closed / open
-            </span>
+            <span className={styles.metaLabel}>Drag — closed / open</span>
           </ScrollReveal>
           <ScrollReveal y={0} duration={1}>
             <BeforeAfter
@@ -252,12 +178,12 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       <FullBleedPlate plate={content.dining} height="clamp(440px, 92vh, 1040px)" cursorLabel="The Dining Room" />
 
       {/* THE BAR */}
-      <section style={{ padding: "clamp(60px, 11vh, 130px) clamp(24px, 6vw, 90px)" }}>
-        <div style={{ maxWidth: 1500, margin: "0 auto" }}>
-          <ScrollReveal y={16} duration={0.9} style={{ marginBottom: 32 }}>
+      <section className={styles.bar}>
+        <div className={styles.barInner}>
+          <ScrollReveal y={16} duration={0.9} className={styles.barEyebrowWrap}>
             <Eyebrow number="03" rule="left" label="The Bar" />
           </ScrollReveal>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(16px, 2.4vw, 38px)" }}>
+          <div className={styles.barGrid}>
             <ScrollReveal y={24} duration={1}>
               <SimplePlate
                 plate={content.bar[0]}
@@ -279,16 +205,8 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       </section>
 
       {/* DETAILS */}
-      <section style={{ padding: "clamp(20px, 3vh, 50px) clamp(24px, 6vw, 90px) clamp(60px, 11vh, 130px)" }}>
-        <div
-          style={{
-            maxWidth: 1240,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "clamp(16px, 2.4vw, 40px)",
-          }}
-        >
+      <section className={styles.details}>
+        <div className={styles.detailsGrid}>
           <ScrollReveal y={24} duration={1}>
             <SimplePlate
               plate={content.details[0]}
@@ -313,34 +231,12 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       </section>
 
       {/* QUOTE + PORTRAIT */}
-      <section style={{ padding: "clamp(40px, 8vh, 100px) clamp(24px, 6vw, 90px) clamp(60px, 11vh, 130px)" }}>
-        <div
-          style={{
-            maxWidth: 1240,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1.55fr) minmax(0, 0.7fr)",
-            gap: "clamp(32px, 6vw, 90px)",
-            alignItems: "center",
-          }}
-        >
-          <ScrollReveal
-            as="blockquote"
-            y={20}
-            duration={1}
-            style={{
-              margin: 0,
-              fontFamily: "var(--font-italiana), serif",
-              fontWeight: 400,
-              fontSize: "clamp(30px, 4.6vw, 68px)",
-              lineHeight: 1.08,
-              letterSpacing: "-0.01em",
-              color: "var(--ink)",
-            }}
-          >
+      <section className={styles.quoteSection}>
+        <div className={styles.quoteGrid}>
+          <ScrollReveal as="blockquote" y={20} duration={1} className={styles.quoteText}>
             {withItalicPhrase(content.quote, content.quoteItalic)}
           </ScrollReveal>
-          <ScrollReveal y={24} duration={1} delay={0.1} style={{ justifySelf: "end", width: "100%", maxWidth: 300 }}>
+          <ScrollReveal y={24} duration={1} delay={0.1} className={styles.portraitWrap}>
             <SimplePlate
               plate={content.portrait}
               aspectRatio="0.547"
@@ -356,31 +252,11 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       <FullBleedPlate plate={content.corridor} height="clamp(440px, 92vh, 1040px)" cursorLabel="The Corridor" />
 
       {/* THE PASSAGE */}
-      <section style={{ padding: "clamp(60px, 11vh, 130px) clamp(24px, 6vw, 90px)" }}>
-        <div
-          style={{
-            maxWidth: 1240,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 0.78fr) minmax(0, 1fr)",
-            gap: "clamp(32px, 6vw, 96px)",
-            alignItems: "center",
-          }}
-        >
+      <section className={styles.passage}>
+        <div className={styles.passageGrid}>
           <ScrollReveal y={18} duration={1}>
             <Eyebrow number="04" rule="left" label="The Passage" />
-            <h3
-              style={{
-                margin: "22px 0 0",
-                fontFamily: "var(--font-italiana), serif",
-                fontWeight: 400,
-                fontSize: "clamp(26px, 3vw, 44px)",
-                lineHeight: 1.14,
-                color: "var(--ink)",
-              }}
-            >
-              {content.passage.heading}
-            </h3>
+            <h3 className={styles.passageHeading}>{content.passage.heading}</h3>
           </ScrollReveal>
           <ScrollReveal y={26} duration={1} delay={0.1}>
             <SimplePlate
@@ -396,32 +272,17 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       </section>
 
       {/* ARRIVAL */}
-      <section style={{ padding: "clamp(20px, 3vh, 50px) clamp(24px, 6vw, 90px) clamp(70px, 12vh, 140px)" }}>
-        <div style={{ maxWidth: 1500, margin: "0 auto" }}>
+      <section className={styles.arrival}>
+        <div className={styles.arrivalInner}>
           <ScrollReveal
             y={16}
             duration={0.9}
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-between",
-              gap: 20,
-              marginBottom: 30,
-            }}
+            className={`${styles.sectionHeaderRow} ${styles.arrivalHeader}`}
           >
             <Eyebrow number="05" rule="left" label="Arrival" />
-            <span style={{ fontSize: 9.5, letterSpacing: "0.2em", color: "var(--meta)", textTransform: "uppercase" }}>
-              Day / Dusk
-            </span>
+            <span className={styles.metaLabel}>Day / Dusk</span>
           </ScrollReveal>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1.42fr 1.087fr",
-              gap: "clamp(16px, 2.4vw, 38px)",
-              alignItems: "stretch",
-            }}
-          >
+          <div className={styles.arrivalGrid}>
             <ScrollReveal y={24} duration={1}>
               <SimplePlate
                 plate={content.arrival.day}
@@ -447,17 +308,12 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
       </section>
 
       {/* CREDITS */}
-      <section style={{ padding: "clamp(50px, 9vh, 110px) clamp(24px, 6vw, 90px) clamp(72px, 12vh, 140px)" }}>
-        <div style={{ maxWidth: 1340, margin: "0 auto" }}>
-          <ScrollReveal y={16} duration={0.9} style={{ marginBottom: 28 }}>
+      <section className={styles.credits}>
+        <div className={styles.creditsInner}>
+          <ScrollReveal y={16} duration={0.9} className={styles.creditsEyebrowWrap}>
             <Eyebrow number="06" rule="left" label="Project Credits" />
           </ScrollReveal>
-          <ScrollReveal
-            y={18}
-            duration={1}
-            delay={0.08}
-            style={{ display: "flex", flexWrap: "wrap", gap: "clamp(24px, 4vw, 72px)" }}
-          >
+          <ScrollReveal y={18} duration={1} delay={0.08} className={styles.creditsFactsRow}>
             {content.credits.map((fact) => (
               <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
             ))}
@@ -471,40 +327,16 @@ function RichCaseStudy({ content }: { content: CaseStudyContent }) {
 function PlaceholderCaseStudy({ project }: { project: Project }) {
   return (
     <>
-      <section style={{ padding: "clamp(92px, 12vh, 146px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px)" }}>
-        <ScrollReveal y={14} duration={0.9} style={{ marginBottom: "clamp(20px, 3.2vh, 34px)" }}>
+      <section className={styles.placeholderHero}>
+        <ScrollReveal y={14} duration={0.9} className={styles.placeholderEyebrowWrap}>
           <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={project.tag} />
         </ScrollReveal>
-        <ScrollReveal
-          as="h1"
-          y={20}
-          duration={1.1}
-          style={{
-            margin: "0 0 30px",
-            fontFamily: "var(--font-italiana), serif",
-            fontWeight: 400,
-            lineHeight: 0.92,
-            letterSpacing: "-0.01em",
-            fontSize: "clamp(44px, 7.4vw, 122px)",
-            color: "var(--ink)",
-          }}
-        >
+        <ScrollReveal as="h1" y={20} duration={1.1} className={styles.placeholderTitle}>
           {project.name}
         </ScrollReveal>
         <ScrollReveal y={18} duration={1} delay={0.1}>
-          <p style={{ margin: "0 0 30px", maxWidth: 560, fontSize: "clamp(14px, 1.25vw, 17px)", lineHeight: 1.75, color: "var(--body)" }}>
-            {project.description}
-          </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: "20px 32px",
-              borderTop: "1px solid var(--line)",
-              paddingTop: 24,
-              maxWidth: 560,
-            }}
-          >
+          <p className={styles.placeholderIntro}>{project.description}</p>
+          <div className={styles.placeholderFactsGrid}>
             <FactItem label="Location" value={project.location} />
             <FactItem label="Area" value={project.area} />
             <FactItem label="Year" value={project.year} accent />
@@ -512,42 +344,18 @@ function PlaceholderCaseStudy({ project }: { project: Project }) {
         </ScrollReveal>
       </section>
 
-      <figure
-        data-cursor-label={project.name}
-        style={{
-          margin: 0,
-          position: "relative",
-          width: "100%",
-          height: "clamp(440px, 90vh, 1020px)",
-          overflow: "hidden",
-          background: "var(--image-bg)",
-        }}
-      >
+      <figure data-cursor-label={project.name} className={styles.placeholderFigure}>
         <Parallax src={project.image} alt={project.name} priority sizes="100vw" />
         <CaptionChip>{project.caption}</CaptionChip>
       </figure>
 
-      <section style={{ padding: "clamp(70px, 13vh, 150px) clamp(24px, 6vw, 90px)", textAlign: "center" }}>
-        <ScrollReveal y={16} duration={0.9} style={{ marginBottom: 26 }}>
+      <section className={styles.placeholderClosing}>
+        <ScrollReveal y={16} duration={0.9} className={styles.placeholderClosingEyebrowWrap}>
           <Eyebrow rule="both" label="In Development" />
         </ScrollReveal>
-        <ScrollReveal
-          as="h2"
-          y={20}
-          duration={1}
-          style={{
-            margin: "0 auto",
-            maxWidth: 700,
-            fontFamily: "var(--font-italiana), serif",
-            fontWeight: 400,
-            fontSize: "clamp(28px, 4vw, 48px)",
-            lineHeight: 1.12,
-            letterSpacing: "-0.01em",
-            color: "var(--ink)",
-          }}
-        >
+        <ScrollReveal as="h2" y={20} duration={1} className={styles.placeholderClosingHeading}>
           The full case study for this project is{" "}
-          <span style={{ fontStyle: "italic", color: "var(--g)" }}>in development.</span>
+          <span className={styles.italicGold}>in development.</span>
         </ScrollReveal>
       </section>
     </>
@@ -564,7 +372,7 @@ export default async function ProjectPage({ params }: PageParams) {
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <div style={{ position: "relative", overflowX: "hidden", minHeight: "100vh" }}>
+    <div className={styles.root}>
       <FilmGrain blendMode="multiply" zIndex={90} />
       <ScrollProgress />
       <CursorLabel />
@@ -572,13 +380,7 @@ export default async function ProjectPage({ params }: PageParams) {
 
       {content ? <RichCaseStudy content={content} /> : <PlaceholderCaseStudy project={project} />}
 
-      <nav
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 0.82fr) minmax(0, 1.18fr)",
-          borderTop: "1px solid var(--line)",
-        }}
-      >
+      <nav className={styles.pagerNav}>
         <PagerLink
           href="/works"
           arrow="left"
@@ -601,7 +403,7 @@ export default async function ProjectPage({ params }: PageParams) {
         />
       </nav>
 
-      <Footer variant="page" />
+      <Footer />
     </div>
   );
 }

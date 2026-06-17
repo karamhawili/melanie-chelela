@@ -1,142 +1,402 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
+.root {
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  background: radial-gradient(130% 90% at 50% -8%, rgba(201, 169, 106, 0.22), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
 
-  --text-primary: #000;
-  --text-secondary: #666;
+.hiddenSvg {
+  position: absolute;
+}
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(125% 112% at 50% 35%, transparent 58%, rgba(90, 70, 40, 0.12));
 }
 
 .main {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+  padding-top: 78px;
+  position: relative;
+  z-index: 1;
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+/* shared utility-ish patterns reused across sections */
+.nowrap {
+  white-space: nowrap;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+.metaDivider {
+  color: rgba(201, 169, 106, 0.6);
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
+.italicGold {
+  font-style: italic;
+  color: var(--g);
 }
 
-.intro a {
+.panelStroke {
+  stroke: var(--panel);
+}
+
+/* HERO */
+.hero {
+  scroll-margin-top: 80px;
+  position: relative;
+  min-height: calc(100vh - 78px);
+  box-sizing: border-box;
+  padding: clamp(48px, 8vh, 96px) clamp(40px, 7vw, 120px) clamp(48px, 7vh, 84px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(40px, 6vw, 104px);
+}
+
+.heroLeft {
+  position: relative;
+}
+
+.heroEyebrowWrap {
+  margin-bottom: 32px;
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: var(--font-italiana), serif;
   font-weight: 500;
-  color: var(--text-primary);
+  line-height: 0.82;
+  letter-spacing: -0.02em;
+  font-size: clamp(64px, 10.8vw, 208px);
+  color: var(--ink);
 }
 
-.ctas {
+.heroTitleLine {
+  display: block;
+}
+
+.heroTitleLineGold {
+  display: block;
+  color: var(--g);
+}
+
+.heroMeta {
+  margin-top: 36px;
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+  align-items: center;
+  gap: 15px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--meta);
+  text-transform: uppercase;
 }
 
-.ctas a {
+.heroPhotoWrap {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  justify-self: end;
+}
+
+.photoFrame {
+  position: relative;
+  border: 1px solid rgba(201, 169, 106, 0.3);
+  padding: 13px;
+  background: var(--frame);
+}
+
+.photoInner {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--ph);
+}
+
+.insetBorder {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.planCard {
+  position: absolute;
+  left: -48px;
+  bottom: -40px;
+  width: 208px;
+  border: 1px solid rgba(201, 169, 106, 0.3);
+  padding: 16px;
+  background: var(--panel);
+  z-index: 3;
+}
+
+.planCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.planCardLabel {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  color: var(--meta);
+  text-transform: uppercase;
+}
+
+.planCardScale {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--g);
+  font-variant-numeric: tabular-nums;
+}
+
+.planSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* WALL DIVIDER */
+.wallDivider {
+  margin: 40px 0;
+  height: 34px;
+  position: relative;
+  border-top: 1px solid rgba(201, 169, 106, 0.5);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.5);
+  background: url(#mcHatch);
+}
+
+.wallDividerLabel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 18px;
+  font-size: 9px;
+  letter-spacing: 0.34em;
+  color: var(--meta);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* PHILOSOPHY */
+.philosophy {
+  scroll-margin-top: 80px;
+  padding: 50px 6vw 80px;
+  text-align: center;
+}
+
+.philosophyEyebrowWrap {
+  margin-bottom: 30px;
+}
+
+.philosophyHeading {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: var(--font-italiana), serif;
+  font-weight: 400;
+  font-size: clamp(30px, 4.6vw, 64px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.philosophyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 760px;
+  margin: 46px auto 0;
+  text-align: left;
+}
+
+.philosophyParagraph {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--body);
+}
+
+/* SELECTED WORK */
+.work {
+  scroll-margin-top: 80px;
+  padding: 50px 6vw 90px;
+}
+
+.workEyebrowWrap {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.workGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 64px 56px;
+}
+
+.workCard {
+  position: relative;
+}
+
+.workCardFrame {
+  border: 1px solid rgba(201, 169, 106, 0.28);
+  padding: 12px;
+  background: var(--frame);
+}
+
+.workCardImageInner {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  background: var(--ph);
+}
+
+.planBadgeSvg {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 92px;
+  height: auto;
+  background: var(--bg);
+  padding: 7px;
+  border: 1px solid rgba(201, 169, 106, 0.22);
+}
+
+.workCardTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.workCardTitle {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-italiana), serif;
+  font-weight: 500;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.workCardYear {
+  flex: 0 0 auto;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--g);
+}
+
+.workCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-top: 12px;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--meta);
+  text-transform: uppercase;
+}
+
+.workCta {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  margin-top: 64px;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+/* APPROACH */
+.approach {
+  scroll-margin-top: 80px;
+  padding: 50px 6vw 90px;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.approachEyebrowWrap {
+  text-align: center;
+  margin-bottom: 50px;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.approachList {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+.serviceRow {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 28px;
+  align-items: baseline;
+  padding: 24px 0;
+  border-top: 1px solid rgba(201, 169, 106, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
+.serviceLetter {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--g);
+}
 
-  .page {
-    --background: #000;
-    --foreground: #000;
+.serviceTitle {
+  margin: 0;
+  font-family: var(--font-italiana), serif;
+  font-weight: 400;
+  font-size: clamp(22px, 2.4vw, 32px);
+  color: var(--ink);
+}
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
+.serviceDescription {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--body);
+}
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
+/* INQUIRE */
+.inquire {
+  scroll-margin-top: 80px;
+  padding: 80px 6vw 70px;
+  text-align: center;
+  position: relative;
+  border-top: 1px solid rgba(201, 169, 106, 0.18);
+}
+
+.inquireEyebrowWrap {
+  margin-bottom: 28px;
+}
+
+.inquireHeading {
+  margin: 0 auto;
+  max-width: 900px;
+  font-family: var(--font-italiana), serif;
+  font-weight: 400;
+  font-size: clamp(44px, 7vw, 110px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.inquireContactWrap {
+  margin-top: 36px;
+}
+
+.email {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 14px;
+  color: var(--g);
+}
+
+.address {
+  margin-top: 10px;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--meta);
+  text-transform: uppercase;
+}
+
+.inquireButtonWrap {
+  margin-top: 32px;
 }
