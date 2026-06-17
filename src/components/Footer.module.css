@@ -1,0 +1,22 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+
+.home {
+  padding: 36px 6vw 40px;
+}
+
+.page {
+  padding: 36px clamp(24px, 6vw, 90px) 40px;
+}
+
+.coordinates {
+  color: var(--g);
+}

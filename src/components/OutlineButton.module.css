@@ -1,0 +1,28 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--g);
+  color: var(--g);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 16px 32px;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.button:hover {
+  background: var(--g);
+  color: #ffffff;
+}
+
+.label {
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.suffix {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  opacity: 0.7;
+}

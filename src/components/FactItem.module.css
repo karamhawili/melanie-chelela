@@ -1,0 +1,17 @@
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.value {
+  color: var(--ink);
+}
+
+.accent {
+  color: var(--g);
+}

@@ -1,0 +1,36 @@
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 96;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  background: var(--g);
+  color: #1f1810;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.active {
+  opacity: 1;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1f1810;
+}
+
+.text {
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}

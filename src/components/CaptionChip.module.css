@@ -1,0 +1,25 @@
+.chip {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  color: var(--caption-text);
+  background: var(--caption-bg);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  padding: 6px 11px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.twoPart {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.divider {
+  width: 26px;
+  height: 1px;
+  background: #fff;
+  opacity: 0.7;
+}
