@@ -189,7 +189,7 @@ export default async function WorksPage() {
           href="/"
           arrow="left"
           label="Return to Studio"
-          title="Melanie Chlela"
+          title="Melanie Chelela"
           layout="row"
           padding="clamp(40px, 7vh, 80px) clamp(24px, 6vw, 90px)"
           gap="20px"

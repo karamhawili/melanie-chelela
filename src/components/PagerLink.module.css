@@ -21,13 +21,19 @@
 }
 
 .start {
-  align-items: flex-start;
   text-align: left;
 }
 
 .end {
-  align-items: flex-end;
   text-align: right;
+}
+
+.column.start {
+  align-items: flex-start;
+}
+
+.column.end {
+  align-items: flex-end;
 }
 
 .bordered {

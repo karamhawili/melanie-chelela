@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: PageParams) {
   const raw = data as RawProject | null;
   if (!raw) return {};
   return {
-    title: `${raw.seoTitle || raw.title} — Melanie Chlela`,
+    title: `${raw.seoTitle || raw.title} — Melanie Chelela`,
     description: raw.seoDescription || raw.description,
   };
 }

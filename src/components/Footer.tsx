@@ -6,7 +6,7 @@ interface FooterProps {
 }
 
 export default function Footer({
-  copyright = "© 2026 Studio Melanie Chlela",
+  copyright = "© 2026 Studio Melanie Chelela",
   coordinates = "N 33.89° · E 35.50°",
 }: FooterProps) {
   return (

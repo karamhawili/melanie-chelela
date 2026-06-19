@@ -20,7 +20,7 @@ export default function Header({
   variant,
   projectIndex,
   projectTotal,
-  wordmark = "Melanie Chlela",
+  wordmark = "Melanie Chelela",
 }: HeaderProps) {
   const isHome = variant === "home";
   const isWorks = variant === "works";

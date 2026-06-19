@@ -9,14 +9,14 @@ export const siteSettingsType = defineType({
       name: "wordmark",
       title: "Wordmark",
       type: "string",
-      initialValue: "Melanie Chlela",
+      initialValue: "Melanie Chelela",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "footerCopyright",
       title: "Footer copyright",
       type: "string",
-      initialValue: "© 2026 Studio Melanie Chlela",
+      initialValue: "© 2026 Studio Melanie Chelela",
       validation: (rule) => rule.required(),
     }),
     defineField({
