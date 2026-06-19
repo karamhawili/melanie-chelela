@@ -6,6 +6,7 @@ interface HeaderProps {
   /** Shown as an inert "Project 01 / 28" label when variant is "project". */
   projectIndex?: number;
   projectTotal?: number;
+  wordmark?: string;
 }
 
 const navItems = [
@@ -15,7 +16,12 @@ const navItems = [
   { label: "Inquire", href: "#inquire" },
 ];
 
-export default function Header({ variant, projectIndex, projectTotal }: HeaderProps) {
+export default function Header({
+  variant,
+  projectIndex,
+  projectTotal,
+  wordmark = "Melanie Chlela",
+}: HeaderProps) {
   const isHome = variant === "home";
   const isWorks = variant === "works";
   const isProject = variant === "project";
@@ -23,7 +29,7 @@ export default function Header({ variant, projectIndex, projectTotal }: HeaderPr
   return (
     <header className={`${styles.header} ${styles.translucent}`}>
       <Link href={isHome ? "#top" : "/"} className={styles.wordmarkLink}>
-        <span className={styles.wordmark}>Melanie Chlela</span>
+        <span className={styles.wordmark}>{wordmark}</span>
       </Link>
 
       {isHome && (

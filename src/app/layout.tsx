@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Italiana, Space_Grotesk } from "next/font/google";
+import { SanityLive } from "@/sanity/lib/live";
 import "./globals.css";
 
 const italiana = Italiana({
@@ -31,7 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${italiana.variable} ${spaceGrotesk.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SanityLive />
+      </body>
     </html>
   );
 }

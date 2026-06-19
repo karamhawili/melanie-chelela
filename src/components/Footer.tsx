@@ -1,10 +1,18 @@
 import styles from "./Footer.module.css";
 
-export default function Footer() {
+interface FooterProps {
+  copyright?: string;
+  coordinates?: string;
+}
+
+export default function Footer({
+  copyright = "© 2026 Studio Melanie Chlela",
+  coordinates = "N 33.89° · E 35.50°",
+}: FooterProps) {
   return (
     <footer className={styles.footer}>
-      <span>© 2026 Studio Melanie Chlela</span>
-      <span className={styles.coordinates}>N 33.89° · E 35.50°</span>
+      <span>{copyright}</span>
+      <span className={styles.coordinates}>{coordinates}</span>
     </footer>
   );
 }

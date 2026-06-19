@@ -5,41 +5,28 @@ import OutlineButton from "@/components/OutlineButton";
 import ScrollReveal from "@/components/ScrollReveal";
 import FilmGrain from "@/components/FilmGrain";
 import Parallax from "@/components/Parallax";
-import { projects } from "@/lib/projects";
+import { sanityFetch } from "@/sanity/lib/live";
+import { PROJECTS_QUERY, HOME_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import {
+  toProject,
+  toHomePage,
+  toSiteSettings,
+  type RawProject,
+  type RawHomePage,
+  type RawSiteSettings,
+} from "@/sanity/lib/adapters";
 import styles from "./page.module.css";
 
-const services = [
-  {
-    n: "A",
-    title: "Interior Architecture",
-    description:
-      "Structure, light, and circulation considered as one continuous drawing.",
-  },
-  {
-    n: "B",
-    title: "Spatial Planning",
-    description:
-      "Plans resolved to the millimetre before a single wall is moved.",
-  },
-  {
-    n: "C",
-    title: "Bespoke Joinery",
-    description:
-      "Cabinetry and millwork drawn and made for the room it belongs to.",
-  },
-  {
-    n: "D",
-    title: "Art & Object Curation",
-    description:
-      "Pieces chosen with the patience of a collector, not a decorator.",
-  },
-  {
-    n: "E",
-    title: "Project Direction",
-    description:
-      "From the first measurement to the final placement, held to one standard.",
-  },
-] as const;
+function withItalicPhrase(text: string, italic: string) {
+  const [before, after] = text.split(italic);
+  return (
+    <>
+      {before}
+      <span className={styles.italicGold}>{italic}</span>
+      {after}
+    </>
+  );
+}
 
 function PlanSvg() {
   return (
@@ -79,8 +66,19 @@ function PlanBadgeSvg() {
   );
 }
 
-export default function HomePage() {
-  const selectedWork = projects.slice(0, 4);
+export default async function HomePage() {
+  const [{ data: rawHomeData }, { data: rawProjectsData }, { data: rawSettingsData }] = await Promise.all([
+    sanityFetch({ query: HOME_PAGE_QUERY }),
+    sanityFetch({ query: PROJECTS_QUERY }),
+    sanityFetch({ query: SITE_SETTINGS_QUERY }),
+  ]);
+
+  const home = toHomePage((rawHomeData as RawHomePage | null) ?? {});
+  const projects = (rawProjectsData as RawProject[]).map(toProject);
+  const settings = toSiteSettings((rawSettingsData as RawSiteSettings | null) ?? {});
+
+  const selectedWork = projects.slice(0, home.selectedWorkCount);
+  const [emailUser, emailDomain] = settings.inquireEmail.split("@");
 
   return (
     <div className={styles.root}>
@@ -95,23 +93,23 @@ export default function HomePage() {
       <div aria-hidden="true" className={styles.vignette} />
       <FilmGrain blendMode="overlay" zIndex={41} />
 
-      <Header variant="home" />
+      <Header variant="home" wordmark={settings.wordmark} />
 
       <main className={styles.main}>
         {/* HERO */}
         <section id="top" className={styles.hero}>
           <div className={styles.heroLeft}>
             <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
-              <Eyebrow label="Interior Architecture" rule="left" ruleWidth={46} letterSpacing="0.4em" />
+              <Eyebrow label={home.heroEyebrow} rule="left" ruleWidth={46} letterSpacing="0.4em" />
             </ScrollReveal>
             <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
-              <span className={styles.heroTitleLine}>Melanie</span>
-              <span className={styles.heroTitleLineGold}>Chlela</span>
+              <span className={styles.heroTitleLine}>{home.heroTitleLine1}</span>
+              <span className={styles.heroTitleLineGold}>{home.heroTitleLine2}</span>
             </ScrollReveal>
             <ScrollReveal y={0} duration={1} delay={0.4} className={styles.heroMeta}>
-              <span className={styles.nowrap}>Est. Beirut</span>
+              <span className={styles.nowrap}>{home.heroMetaLeft}</span>
               <span className={styles.metaDivider}>/</span>
-              <span className={styles.nowrap}>Since 2009</span>
+              <span className={styles.nowrap}>{home.heroMetaRight}</span>
             </ScrollReveal>
           </div>
 
@@ -119,8 +117,8 @@ export default function HomePage() {
             <div className={styles.photoFrame}>
               <div className={styles.photoInner}>
                 <Parallax
-                  src="/projects/terra-mare/cam07.jpg"
-                  alt="Interior — Salon"
+                  src={home.heroImage.src}
+                  alt={home.heroImage.alt}
                   priority
                   sizes="(min-width: 768px) 500px, 100vw"
                 />
@@ -139,7 +137,7 @@ export default function HomePage() {
 
         {/* WALL DIVIDER */}
         <div className={styles.wallDivider}>
-          <div className={styles.wallDividerLabel}>Interiors, Drawn to the Millimetre</div>
+          <div className={styles.wallDividerLabel}>{home.wallDividerText}</div>
         </div>
 
         {/* PHILOSOPHY */}
@@ -148,18 +146,14 @@ export default function HomePage() {
             <Eyebrow number="01" label="Philosophy" />
           </ScrollReveal>
           <ScrollReveal as="h2" y={20} duration={1} delay={0.05} className={styles.philosophyHeading}>
-            Luxury is what remains <span className={styles.italicGold}>when nothing</span> is excessive.
+            {withItalicPhrase(home.philosophyHeading, home.philosophyHeadingEmphasis)}
           </ScrollReveal>
           <div className={styles.philosophyGrid}>
             <ScrollReveal as="p" y={16} duration={0.9} delay={0.1} className={styles.philosophyParagraph}>
-              Every project begins as a drawing — walls, light, and circulation resolved
-              before a single material is named. The plan is not a step toward the space.
-              The plan is the space.
+              {home.philosophyParagraph1}
             </ScrollReveal>
             <ScrollReveal as="p" y={16} duration={0.9} delay={0.18} className={styles.philosophyParagraph}>
-              A Lebanese sensibility tempered by European restraint: warm stone, aged
-              brass, linen and shadow. Rooms that withhold, so the few things that matter
-              can finally be seen.
+              {home.philosophyParagraph2}
             </ScrollReveal>
           </div>
         </section>
@@ -212,9 +206,9 @@ export default function HomePage() {
             <Eyebrow number="03" label="Approach" />
           </ScrollReveal>
           <div className={styles.approachList}>
-            {services.map((service) => (
-              <ScrollReveal key={service.n} y={16} duration={0.9} className={styles.serviceRow}>
-                <span className={styles.serviceLetter}>{service.n}</span>
+            {home.services.map((service) => (
+              <ScrollReveal key={service.letter} y={16} duration={0.9} className={styles.serviceRow}>
+                <span className={styles.serviceLetter}>{service.letter}</span>
                 <h3 className={styles.serviceTitle}>{service.title}</h3>
                 <p className={styles.serviceDescription}>{service.description}</p>
               </ScrollReveal>
@@ -228,13 +222,15 @@ export default function HomePage() {
             <Eyebrow number="04" label="Inquire" />
           </ScrollReveal>
           <ScrollReveal as="h2" y={20} duration={1} className={styles.inquireHeading}>
-            Begin with a <span className={styles.italicGold}>conversation.</span>
+            {withItalicPhrase(home.inquireHeading, home.inquireHeadingEmphasis)}
           </ScrollReveal>
           <ScrollReveal y={16} duration={1} delay={0.12} className={styles.inquireContactWrap}>
             <div className={styles.email}>
-              studio<span>@</span>melaniechlela.com
+              {emailUser}
+              <span>@</span>
+              {emailDomain}
             </div>
-            <div className={styles.address}>Saifi Village, Rue Pasteur · Beirut · Lebanon</div>
+            <div className={styles.address}>{settings.inquireAddress}</div>
             <div className={styles.inquireButtonWrap}>
               <OutlineButton href="#top" padding="15px 30px">
                 Request an Introduction
@@ -243,7 +239,7 @@ export default function HomePage() {
           </ScrollReveal>
         </section>
 
-        <Footer />
+        <Footer copyright={settings.footerCopyright} coordinates={settings.footerCoordinates} />
       </main>
     </div>
   );

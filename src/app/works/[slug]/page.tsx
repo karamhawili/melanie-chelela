@@ -11,40 +11,59 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ScrollProgress from "@/components/ScrollProgress";
 import CursorLabel from "@/components/CursorLabel";
 import FilmGrain from "@/components/FilmGrain";
-import { projects, type Project } from "@/lib/projects";
-import { caseStudies, type Plate, type Fact, type CaseStudyContent } from "@/lib/caseStudies";
+import { sanityFetch } from "@/sanity/lib/live";
+import { PROJECTS_QUERY, PROJECT_BY_SLUG_QUERY, PROJECT_SLUGS_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import {
+  toProject,
+  toCaseStudyBlocks,
+  toSiteSettings,
+  type RawProject,
+  type RawSiteSettings,
+} from "@/sanity/lib/adapters";
+import type {
+  Fact,
+  Plate,
+  Project,
+  CaseStudyBlock,
+  CaseStudyHeroBlock,
+  FullBleedImageBlock,
+  OverviewBlock,
+  BeforeAfterBlock,
+  TwoUpImageBlock,
+  QuotePortraitBlock,
+  TextImageBlock,
+  CreditsBlock,
+} from "@/sanity/lib/types";
 import styles from "./page.module.css";
-
-// Flavor text matching the source's "Project 01 / 28" counter — 28 implies a
-// larger unpublished portfolio, it isn't meant to equal projects.length (6).
-const PROJECT_TOTAL = 28;
 
 interface PageParams {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
+export async function generateStaticParams() {
+  const { data } = await sanityFetch({ query: PROJECT_SLUGS_QUERY });
+  return (data as Array<{ slug: string }>).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageParams) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
-  if (!project) return {};
+  const { data } = await sanityFetch({ query: PROJECT_BY_SLUG_QUERY, params: { slug } });
+  const raw = data as RawProject | null;
+  if (!raw) return {};
   return {
-    title: `${project.name} — Melanie Chlela`,
-    description: project.description,
+    title: `${raw.seoTitle || raw.title} — Melanie Chlela`,
+    description: raw.seoDescription || raw.description,
   };
 }
 
 function FullBleedPlate({
   plate,
-  height,
+  height = "clamp(440px, 92vh, 1040px)",
   cursorLabel,
   priority,
 }: {
   plate: Plate;
-  height: string;
+  height?: string;
   cursorLabel: string;
   priority?: boolean;
 }) {
@@ -104,222 +123,206 @@ function FactGrid({ facts, maxWidth = 440 }: { facts: Fact[]; maxWidth?: number 
   );
 }
 
-function RichCaseStudy({ content }: { content: CaseStudyContent }) {
+// --- One render component per page-builder block type ---
+
+function CaseStudyHeroSection({ block }: { block: CaseStudyHeroBlock }) {
   return (
-    <>
-      {/* HERO */}
-      <section className={styles.hero}>
-        <div className={styles.heroGrid}>
-          <div>
-            <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
-              <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={content.heroEyebrow} />
-            </ScrollReveal>
-            <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
-              <span className={styles.heroTitleLine}>{content.heroTitleLine1}</span>
-              <span className={styles.heroTitleLineGold}>{content.heroTitleLine2}</span>
-            </ScrollReveal>
+    <section className={styles.hero}>
+      <div className={styles.heroGrid}>
+        <div>
+          <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
+            <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={block.eyebrow} />
+          </ScrollReveal>
+          <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
+            <span className={styles.heroTitleLine}>{block.titleLine1}</span>
+            <span className={styles.heroTitleLineGold}>{block.titleLine2}</span>
+          </ScrollReveal>
+        </div>
+        <ScrollReveal y={18} duration={1} delay={0.15} className={styles.heroIntroWrap}>
+          <p className={styles.heroIntro}>{block.intro}</p>
+          <div className={styles.heroFactsGrid}>
+            {block.facts.map((fact) => (
+              <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
+            ))}
           </div>
-          <ScrollReveal y={18} duration={1} delay={0.15} className={styles.heroIntroWrap}>
-            <p className={styles.heroIntro}>{content.heroIntro}</p>
-            <div className={styles.heroFactsGrid}>
-              {content.heroFacts.map((fact) => (
-                <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
-              ))}
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
-      <FullBleedPlate plate={content.lead} height="clamp(440px, 90vh, 1020px)" cursorLabel="The Terrace" priority />
+function FullBleedImageSection({ block }: { block: FullBleedImageBlock }) {
+  return (
+    <FullBleedPlate plate={block.plate} height={block.height} cursorLabel={block.plate.label} />
+  );
+}
 
-      {/* OVERVIEW */}
-      <section className={styles.overview}>
-        <div className={styles.overviewGrid}>
-          <ScrollReveal y={18} duration={1}>
-            <Eyebrow number="01" rule="left" label="The Project" />
-            <div className={styles.overviewFactsWrap}>
-              <FactGrid facts={content.overviewFacts} />
-            </div>
-          </ScrollReveal>
-          <ScrollReveal y={22} duration={1} delay={0.1}>
-            <h2 className={styles.overviewStatement}>
-              {withItalicPhrase(content.overviewStatement, content.overviewStatementItalic)}
-            </h2>
-            <p className={styles.overviewBody}>{content.overviewBody}</p>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* THRESHOLD */}
-      <section className={styles.threshold}>
-        <div className={styles.thresholdInner}>
-          <ScrollReveal
-            y={16}
-            duration={0.9}
-            className={`${styles.sectionHeaderRow} ${styles.thresholdHeader}`}
-          >
-            <Eyebrow number="02" rule="left" label="The Threshold" />
-            <span className={styles.metaLabel}>Drag — closed / open</span>
-          </ScrollReveal>
-          <ScrollReveal y={0} duration={1}>
-            <BeforeAfter
-              beforeSrc={content.threshold.before.src}
-              beforeAlt={content.threshold.before.alt}
-              beforeLabel={content.threshold.before.label}
-              afterSrc={content.threshold.after.src}
-              afterAlt={content.threshold.after.alt}
-              afterLabel={content.threshold.after.label}
-              caption={content.threshold.caption}
-            />
-          </ScrollReveal>
-        </div>
-      </section>
-
-      <FullBleedPlate plate={content.dining} height="clamp(440px, 92vh, 1040px)" cursorLabel="The Dining Room" />
-
-      {/* THE BAR */}
-      <section className={styles.bar}>
-        <div className={styles.barInner}>
-          <ScrollReveal y={16} duration={0.9} className={styles.barEyebrowWrap}>
-            <Eyebrow number="03" rule="left" label="The Bar" />
-          </ScrollReveal>
-          <div className={styles.barGrid}>
-            <ScrollReveal y={24} duration={1}>
-              <SimplePlate
-                plate={content.bar[0]}
-                aspectRatio="1.438"
-                cursorLabel="The Round Bar"
-                sizes="(min-width: 1024px) 48vw, 100vw"
-              />
-            </ScrollReveal>
-            <ScrollReveal y={24} duration={1} delay={0.08}>
-              <SimplePlate
-                plate={content.bar[1]}
-                aspectRatio="1.438"
-                cursorLabel="The Long Bar"
-                sizes="(min-width: 1024px) 48vw, 100vw"
-              />
-            </ScrollReveal>
+function OverviewSection({ block }: { block: OverviewBlock }) {
+  return (
+    <section className={styles.overview}>
+      <div className={styles.overviewGrid}>
+        <ScrollReveal y={18} duration={1}>
+          <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
+          <div className={styles.overviewFactsWrap}>
+            <FactGrid facts={block.facts} />
           </div>
-        </div>
-      </section>
+        </ScrollReveal>
+        <ScrollReveal y={22} duration={1} delay={0.1}>
+          <h2 className={styles.overviewStatement}>
+            {withItalicPhrase(block.statement, block.statementEmphasis)}
+          </h2>
+          <p className={styles.overviewBody}>{block.body}</p>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
-      {/* DETAILS */}
-      <section className={styles.details}>
-        <div className={styles.detailsGrid}>
+function BeforeAfterSection({ block }: { block: BeforeAfterBlock }) {
+  return (
+    <section className={styles.threshold}>
+      <div className={styles.thresholdInner}>
+        <ScrollReveal y={16} duration={0.9} className={`${styles.sectionHeaderRow} ${styles.thresholdHeader}`}>
+          <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
+          <span className={styles.metaLabel}>{block.dragLabel}</span>
+        </ScrollReveal>
+        <ScrollReveal y={0} duration={1}>
+          <BeforeAfter
+            beforeSrc={block.before.src}
+            beforeAlt={block.before.alt}
+            beforeLabel={block.before.label}
+            afterSrc={block.after.src}
+            afterAlt={block.after.alt}
+            afterLabel={block.after.label}
+            caption={block.caption}
+          />
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+function TwoUpImageSection({ block }: { block: TwoUpImageBlock }) {
+  const hasHeader = Boolean(block.sectionNumber || block.eyebrowLabel || block.metaLabel);
+  return (
+    <section className={styles.bar}>
+      <div className={styles.barInner}>
+        {hasHeader && (
+          <ScrollReveal y={16} duration={0.9} className={styles.sectionHeaderRow}>
+            <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel ?? ""} />
+            {block.metaLabel && <span className={styles.metaLabel}>{block.metaLabel}</span>}
+          </ScrollReveal>
+        )}
+        <div className={styles.barGrid}>
           <ScrollReveal y={24} duration={1}>
             <SimplePlate
-              plate={content.details[0]}
-              aspectRatio="0.896"
-              cursorLabel="Ablutions"
-              oversizeHeight={112}
-              offsetTop={-6}
+              plate={block.left}
+              aspectRatio={block.leftAspectRatio ?? "1.438"}
+              cursorLabel={block.left.label}
               sizes="(min-width: 1024px) 48vw, 100vw"
             />
           </ScrollReveal>
           <ScrollReveal y={24} duration={1} delay={0.08}>
             <SimplePlate
-              plate={content.details[1]}
-              aspectRatio="0.896"
-              cursorLabel="Candle Alcove"
-              oversizeHeight={112}
-              offsetTop={-6}
+              plate={block.right}
+              aspectRatio={block.rightAspectRatio ?? block.leftAspectRatio ?? "1.438"}
+              cursorLabel={block.right.label}
               sizes="(min-width: 1024px) 48vw, 100vw"
             />
           </ScrollReveal>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* QUOTE + PORTRAIT */}
-      <section className={styles.quoteSection}>
-        <div className={styles.quoteGrid}>
-          <ScrollReveal as="blockquote" y={20} duration={1} className={styles.quoteText}>
-            {withItalicPhrase(content.quote, content.quoteItalic)}
-          </ScrollReveal>
-          <ScrollReveal y={24} duration={1} delay={0.1} className={styles.portraitWrap}>
-            <SimplePlate
-              plate={content.portrait}
-              aspectRatio="0.547"
-              cursorLabel="Powder Room"
-              oversizeHeight={112}
-              offsetTop={-6}
-              sizes="300px"
-            />
-          </ScrollReveal>
-        </div>
-      </section>
+function QuotePortraitSection({ block }: { block: QuotePortraitBlock }) {
+  return (
+    <section className={styles.quoteSection}>
+      <div className={styles.quoteGrid}>
+        <ScrollReveal as="blockquote" y={20} duration={1} className={styles.quoteText}>
+          {withItalicPhrase(block.quote, block.quoteEmphasis)}
+        </ScrollReveal>
+        <ScrollReveal y={24} duration={1} delay={0.1} className={styles.portraitWrap}>
+          <SimplePlate
+            plate={block.portrait}
+            aspectRatio="0.547"
+            cursorLabel={block.portrait.label}
+            oversizeHeight={112}
+            offsetTop={-6}
+            sizes="300px"
+          />
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
-      <FullBleedPlate plate={content.corridor} height="clamp(440px, 92vh, 1040px)" cursorLabel="The Corridor" />
+function TextImageSection({ block }: { block: TextImageBlock }) {
+  return (
+    <section className={styles.passage}>
+      <div className={styles.passageGrid}>
+        <ScrollReveal y={18} duration={1}>
+          <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
+          <h3 className={styles.passageHeading}>{block.heading}</h3>
+        </ScrollReveal>
+        <ScrollReveal y={26} duration={1} delay={0.1}>
+          <SimplePlate
+            plate={block.plate}
+            aspectRatio="0.896"
+            cursorLabel={block.plate.label}
+            oversizeHeight={112}
+            offsetTop={-6}
+            sizes="(min-width: 1024px) 55vw, 100vw"
+          />
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
-      {/* THE PASSAGE */}
-      <section className={styles.passage}>
-        <div className={styles.passageGrid}>
-          <ScrollReveal y={18} duration={1}>
-            <Eyebrow number="04" rule="left" label="The Passage" />
-            <h3 className={styles.passageHeading}>{content.passage.heading}</h3>
-          </ScrollReveal>
-          <ScrollReveal y={26} duration={1} delay={0.1}>
-            <SimplePlate
-              plate={content.passage.plate}
-              aspectRatio="0.896"
-              cursorLabel="The Passage"
-              oversizeHeight={112}
-              offsetTop={-6}
-              sizes="(min-width: 1024px) 55vw, 100vw"
-            />
-          </ScrollReveal>
-        </div>
-      </section>
+function CreditsSection({ block }: { block: CreditsBlock }) {
+  return (
+    <section className={styles.credits}>
+      <div className={styles.creditsInner}>
+        <ScrollReveal y={16} duration={0.9} className={styles.creditsEyebrowWrap}>
+          <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
+        </ScrollReveal>
+        <ScrollReveal y={18} duration={1} delay={0.08} className={styles.creditsFactsRow}>
+          {block.credits.map((fact) => (
+            <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
+          ))}
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
-      {/* ARRIVAL */}
-      <section className={styles.arrival}>
-        <div className={styles.arrivalInner}>
-          <ScrollReveal
-            y={16}
-            duration={0.9}
-            className={`${styles.sectionHeaderRow} ${styles.arrivalHeader}`}
-          >
-            <Eyebrow number="05" rule="left" label="Arrival" />
-            <span className={styles.metaLabel}>Day / Dusk</span>
-          </ScrollReveal>
-          <div className={styles.arrivalGrid}>
-            <ScrollReveal y={24} duration={1}>
-              <SimplePlate
-                plate={content.arrival.day}
-                aspectRatio="1.42"
-                cursorLabel="Arrival — Day"
-                oversizeHeight={112}
-                offsetTop={-6}
-                sizes="(min-width: 1024px) 58vw, 100vw"
-              />
-            </ScrollReveal>
-            <ScrollReveal y={24} duration={1} delay={0.08}>
-              <SimplePlate
-                plate={content.arrival.dusk}
-                aspectRatio="1.087"
-                cursorLabel="Arrival — Dusk"
-                oversizeHeight={112}
-                offsetTop={-6}
-                sizes="(min-width: 1024px) 42vw, 100vw"
-              />
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* CREDITS */}
-      <section className={styles.credits}>
-        <div className={styles.creditsInner}>
-          <ScrollReveal y={16} duration={0.9} className={styles.creditsEyebrowWrap}>
-            <Eyebrow number="06" rule="left" label="Project Credits" />
-          </ScrollReveal>
-          <ScrollReveal y={18} duration={1} delay={0.08} className={styles.creditsFactsRow}>
-            {content.credits.map((fact) => (
-              <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
-            ))}
-          </ScrollReveal>
-        </div>
-      </section>
+function CaseStudyBuilder({ blocks }: { blocks: CaseStudyBlock[] }) {
+  return (
+    <>
+      {blocks.map((block) => {
+        switch (block._type) {
+          case "caseStudyHero":
+            return <CaseStudyHeroSection key={block._key} block={block} />;
+          case "fullBleedImage":
+            return <FullBleedImageSection key={block._key} block={block} />;
+          case "overviewBlock":
+            return <OverviewSection key={block._key} block={block} />;
+          case "beforeAfterBlock":
+            return <BeforeAfterSection key={block._key} block={block} />;
+          case "twoUpImageBlock":
+            return <TwoUpImageSection key={block._key} block={block} />;
+          case "quotePortraitBlock":
+            return <QuotePortraitSection key={block._key} block={block} />;
+          case "textImageBlock":
+            return <TextImageSection key={block._key} block={block} />;
+          case "creditsBlock":
+            return <CreditsSection key={block._key} block={block} />;
+          default:
+            return null;
+        }
+      })}
     </>
   );
 }
@@ -364,21 +367,40 @@ function PlaceholderCaseStudy({ project }: { project: Project }) {
 
 export default async function ProjectPage({ params }: PageParams) {
   const { slug } = await params;
-  const index = projects.findIndex((p) => p.slug === slug);
-  if (index === -1) notFound();
 
-  const project = projects[index];
-  const content = caseStudies[slug];
-  const next = projects[(index + 1) % projects.length];
+  const [{ data: rawProjectData }, { data: rawProjectsData }, { data: rawSettingsData }] = await Promise.all([
+    sanityFetch({ query: PROJECT_BY_SLUG_QUERY, params: { slug } }),
+    sanityFetch({ query: PROJECTS_QUERY }),
+    sanityFetch({ query: SITE_SETTINGS_QUERY }),
+  ]);
+
+  const rawProject = rawProjectData as RawProject | null;
+  const rawProjects = rawProjectsData as RawProject[];
+  const rawSettings = rawSettingsData as RawSiteSettings | null;
+
+  if (!rawProject) notFound();
+
+  const project = toProject(rawProject);
+  const blocks = toCaseStudyBlocks(rawProject.pageBuilder);
+  const settings = toSiteSettings(rawSettings ?? {});
+
+  const allProjects = rawProjects.map(toProject);
+  const index = allProjects.findIndex((p) => p.slug === slug);
+  const next = allProjects[(index + 1) % allProjects.length];
 
   return (
     <div className={styles.root}>
       <FilmGrain blendMode="multiply" zIndex={90} />
       <ScrollProgress />
       <CursorLabel />
-      <Header variant="project" projectIndex={index + 1} projectTotal={PROJECT_TOTAL} />
+      <Header
+        variant="project"
+        projectIndex={index + 1}
+        projectTotal={settings.projectCounterTotal}
+        wordmark={settings.wordmark}
+      />
 
-      {content ? <RichCaseStudy content={content} /> : <PlaceholderCaseStudy project={project} />}
+      {blocks.length > 0 ? <CaseStudyBuilder blocks={blocks} /> : <PlaceholderCaseStudy project={project} />}
 
       <nav className={styles.pagerNav}>
         <PagerLink
@@ -403,7 +425,7 @@ export default async function ProjectPage({ params }: PageParams) {
         />
       </nav>
 
-      <Footer />
+      <Footer copyright={settings.footerCopyright} coordinates={settings.footerCoordinates} />
     </div>
   );
 }

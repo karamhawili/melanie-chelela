@@ -11,8 +11,29 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ScrollProgress from "@/components/ScrollProgress";
 import CursorLabel from "@/components/CursorLabel";
 import FilmGrain from "@/components/FilmGrain";
-import { projects, type Project } from "@/lib/projects";
+import { sanityFetch } from "@/sanity/lib/live";
+import { PROJECTS_QUERY, WORKS_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import {
+  toProject,
+  toWorksPage,
+  toSiteSettings,
+  type RawProject,
+  type RawWorksPage,
+  type RawSiteSettings,
+} from "@/sanity/lib/adapters";
+import type { Project } from "@/sanity/lib/types";
 import styles from "./page.module.css";
+
+function withItalicPhrase(text: string, italic: string) {
+  const [before, after] = text.split(italic);
+  return (
+    <>
+      {before}
+      <span className={styles.italicGold}>{italic}</span>
+      {after}
+    </>
+  );
+}
 
 const META_PROPS = {
   gap: 6,
@@ -103,7 +124,16 @@ function TwoUpProject({ project, reverse = false }: { project: Project; reverse?
   );
 }
 
-export default function WorksPage() {
+export default async function WorksPage() {
+  const [{ data: rawProjectsData }, { data: rawWorksPageData }, { data: rawSettingsData }] = await Promise.all([
+    sanityFetch({ query: PROJECTS_QUERY }),
+    sanityFetch({ query: WORKS_PAGE_QUERY }),
+    sanityFetch({ query: SITE_SETTINGS_QUERY }),
+  ]);
+
+  const projects = (rawProjectsData as RawProject[]).map(toProject);
+  const worksPage = toWorksPage((rawWorksPageData as RawWorksPage | null) ?? {});
+  const settings = toSiteSettings((rawSettingsData as RawSiteSettings | null) ?? {});
   const [p1, p2, p3, p4, p5, p6] = projects;
 
   return (
@@ -111,22 +141,21 @@ export default function WorksPage() {
       <FilmGrain blendMode="multiply" zIndex={90} />
       <ScrollProgress />
       <CursorLabel />
-      <Header variant="works" />
+      <Header variant="works" wordmark={settings.wordmark} />
 
       {/* MASTHEAD */}
       <section className={styles.masthead}>
         <div className={styles.mastheadInner}>
           <ScrollReveal y={14} duration={0.9} className={styles.mastheadEyebrowWrap}>
-            <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label="A Selection · 2020 — 2024" />
+            <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={worksPage.mastheadEyebrow} />
           </ScrollReveal>
           <div className={styles.mastheadGrid}>
             <ScrollReveal as="h1" y={20} duration={1.1} className={styles.mastheadTitle}>
-              <span className={styles.mastheadTitleLine}>Selected</span>
-              <span className={styles.mastheadTitleLineGold}>Works</span>
+              <span className={styles.mastheadTitleLine}>{worksPage.mastheadTitleLine1}</span>
+              <span className={styles.mastheadTitleLineGold}>{worksPage.mastheadTitleLine2}</span>
             </ScrollReveal>
             <ScrollReveal as="p" y={18} duration={1} delay={0.15} className={styles.mastheadIntro}>
-              A small, considered body of interiors — each one drawn to the millimetre
-              and held in a single warm key. Scroll slowly; every project opens in full.
+              {worksPage.mastheadIntro}
             </ScrollReveal>
           </div>
         </div>
@@ -142,10 +171,10 @@ export default function WorksPage() {
       {/* CLOSING / INQUIRE */}
       <section className={styles.closing}>
         <ScrollReveal y={16} duration={0.9} className={styles.closingEyebrowWrap}>
-          <Eyebrow rule="both" label="More on Request" />
+          <Eyebrow rule="both" label={worksPage.closingEyebrow} />
         </ScrollReveal>
         <ScrollReveal as="h2" y={20} duration={1} className={styles.closingHeading}>
-          A fuller portfolio is shared <span className={styles.italicGold}>in conversation.</span>
+          {withItalicPhrase(worksPage.closingHeading, worksPage.closingHeadingEmphasis)}
         </ScrollReveal>
         <ScrollReveal y={16} duration={1} delay={0.12} className={styles.closingButtonWrap}>
           <OutlineButton href="/" padding="16px 32px">
@@ -167,7 +196,7 @@ export default function WorksPage() {
         />
       </nav>
 
-      <Footer />
+      <Footer copyright={settings.footerCopyright} coordinates={settings.footerCoordinates} />
     </div>
   );
 }
