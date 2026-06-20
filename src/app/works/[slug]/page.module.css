@@ -141,6 +141,10 @@
   margin: 0 auto;
 }
 
+/* Shared by every section that puts an eyebrow + optional right-aligned
+   meta label in one row above its content (Threshold, Bar, Arrival all
+   render through the same pattern) — keeps the title-to-content gap
+   consistent across all of them. */
 .sectionHeaderRow {
   display: flex;
   align-items: flex-end;
@@ -148,7 +152,7 @@
   gap: 20px;
 }
 
-.thresholdHeader {
+.headerGap {
   margin-bottom: 26px;
 }
 
@@ -160,10 +164,6 @@
 .barInner {
   max-width: 1500px;
   margin: 0 auto;
-}
-
-.barEyebrowWrap {
-  margin-bottom: 32px;
 }
 
 .barGrid {
@@ -246,10 +246,6 @@
 .arrivalInner {
   max-width: 1500px;
   margin: 0 auto;
-}
-
-.arrivalHeader {
-  margin-bottom: 30px;
 }
 
 .arrivalGrid {
@@ -349,4 +345,54 @@
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
   border-top: 1px solid var(--line);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .heroGrid,
+  .overviewGrid,
+  .quoteGrid,
+  .passageGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroIntro,
+  .overviewBody {
+    max-width: none;
+  }
+
+  .portraitWrap {
+    justify-self: center;
+  }
+
+  .barGrid,
+  .detailsGrid,
+  .arrivalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeaderRow {
+    flex-wrap: wrap;
+  }
+
+  .pagerNav {
+    grid-template-columns: 1fr;
+  }
+
+  .placeholderFactsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .placeholderFactsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* .fullBleedFigure's height comes from an inline style prop (already
+     vh-responsive via its clamp default), not this class — only
+     .placeholderFigure sets height purely via CSS and needs the override. */
+  .placeholderFigure {
+    height: clamp(320px, 60vh, 600px);
+  }
 }

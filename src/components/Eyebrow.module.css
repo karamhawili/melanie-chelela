@@ -23,3 +23,9 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
+
+@media (max-width: 480px) {
+  .label {
+    white-space: normal;
+  }
+}

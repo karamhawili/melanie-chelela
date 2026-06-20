@@ -400,3 +400,85 @@
 .inquireButtonWrap {
   margin-top: 32px;
 }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .heroPhotoWrap {
+    justify-self: center;
+  }
+
+  .philosophyGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .serviceRow {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: clamp(48px, 8vh, 96px) 24px clamp(48px, 7vh, 84px);
+  }
+
+  .planCard {
+    left: -16px;
+    bottom: -24px;
+    width: 160px;
+    padding: 12px;
+  }
+
+  .wallDivider {
+    margin: 28px 0;
+  }
+
+  .wallDividerLabel {
+    white-space: normal;
+    text-align: center;
+    max-width: 70vw;
+  }
+
+  .philosophy,
+  .work,
+  .approach {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .workGrid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .serviceRow {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "letter title"
+      "description description";
+    gap: 8px 16px;
+    align-items: start;
+  }
+
+  .serviceLetter {
+    grid-area: letter;
+  }
+
+  .serviceTitle {
+    grid-area: title;
+  }
+
+  .serviceDescription {
+    grid-area: description;
+  }
+
+  .inquire {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}

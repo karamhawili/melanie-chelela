@@ -87,3 +87,31 @@
   color: var(--meta);
   cursor: default;
 }
+
+@media (max-width: 768px) {
+  .nav {
+    gap: 16px;
+  }
+
+  .destinations {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .wordmark {
+    font-size: 17px;
+  }
+
+  .destinations {
+    gap: 12px;
+  }
+}

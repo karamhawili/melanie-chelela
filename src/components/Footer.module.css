@@ -13,3 +13,12 @@
 .coordinates {
   color: var(--g);
 }
+
+@media (max-width: 480px) {
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 28px 20px 32px;
+  }
+}

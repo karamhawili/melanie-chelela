@@ -182,7 +182,7 @@ function BeforeAfterSection({ block }: { block: BeforeAfterBlock }) {
   return (
     <section className={styles.threshold}>
       <div className={styles.thresholdInner}>
-        <ScrollReveal y={16} duration={0.9} className={`${styles.sectionHeaderRow} ${styles.thresholdHeader}`}>
+        <ScrollReveal y={16} duration={0.9} className={`${styles.sectionHeaderRow} ${styles.headerGap}`}>
           <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
           <span className={styles.metaLabel}>{block.dragLabel}</span>
         </ScrollReveal>
@@ -208,7 +208,7 @@ function TwoUpImageSection({ block }: { block: TwoUpImageBlock }) {
     <section className={styles.bar}>
       <div className={styles.barInner}>
         {hasHeader && (
-          <ScrollReveal y={16} duration={0.9} className={styles.sectionHeaderRow}>
+          <ScrollReveal y={16} duration={0.9} className={`${styles.sectionHeaderRow} ${styles.headerGap}`}>
             <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel ?? ""} />
             {block.metaLabel && <span className={styles.metaLabel}>{block.metaLabel}</span>}
           </ScrollReveal>

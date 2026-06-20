@@ -67,3 +67,10 @@
 .pager:hover .title {
   color: var(--g);
 }
+
+@media (max-width: 768px) {
+  .bordered {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+}

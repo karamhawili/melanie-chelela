@@ -244,3 +244,49 @@
   grid-template-columns: 1fr;
   border-top: 1px solid var(--line);
 }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .mastheadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mastheadIntro {
+    max-width: none;
+  }
+
+  .fullBleedDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .twoUpLink,
+  .twoUpLinkReverse {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stacked: text always reads before the image, regardless of the
+     left/right alternation used at desktop widths. */
+  .twoUpFigure.orderFirst,
+  .twoUpFigure.orderLast {
+    order: 2;
+  }
+
+  .twoUpDescription,
+  .fullBleedDescription {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .masthead,
+  .fullBleedInner,
+  .twoUpSection,
+  .closing {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .fullBleedFigure {
+    height: clamp(320px, 60vh, 600px);
+  }
+}

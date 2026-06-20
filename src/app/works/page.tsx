@@ -134,7 +134,6 @@ export default async function WorksPage() {
   const projects = (rawProjectsData as RawProject[]).map(toProject);
   const worksPage = toWorksPage((rawWorksPageData as RawWorksPage | null) ?? {});
   const settings = toSiteSettings((rawSettingsData as RawSiteSettings | null) ?? {});
-  const [p1, p2, p3, p4, p5, p6] = projects;
 
   return (
     <div className={styles.root}>
@@ -161,12 +160,16 @@ export default async function WorksPage() {
         </div>
       </section>
 
-      <FullBleedProject project={p1} priority />
-      <TwoUpProject project={p2} />
-      <TwoUpProject project={p3} reverse />
-      <FullBleedProject project={p4} />
-      <TwoUpProject project={p5} />
-      <TwoUpProject project={p6} reverse />
+      {/* Full-bleed / two-up / two-up-reversed, repeating every 3 projects
+          — generalizes the original 6-project layout to any project count,
+          since the list is CMS-managed and can grow, shrink, or reorder. */}
+      {projects.map((project, index) => {
+        const position = index % 3;
+        if (position === 0) {
+          return <FullBleedProject key={project.slug} project={project} priority={index === 0} />;
+        }
+        return <TwoUpProject key={project.slug} project={project} reverse={position === 2} />;
+      })}
 
       {/* CLOSING / INQUIRE */}
       <section className={styles.closing}>
