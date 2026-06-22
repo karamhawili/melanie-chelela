@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Eyebrow from "@/components/Eyebrow";
@@ -5,6 +6,7 @@ import OutlineButton from "@/components/OutlineButton";
 import ScrollReveal from "@/components/ScrollReveal";
 import FilmGrain from "@/components/FilmGrain";
 import Parallax from "@/components/Parallax";
+import CursorLabel from "@/components/CursorLabel";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECTS_QUERY, HOME_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import {
@@ -92,6 +94,7 @@ export default async function HomePage() {
 
       <div aria-hidden="true" className={styles.vignette} />
       <FilmGrain blendMode="overlay" zIndex={41} />
+      <CursorLabel />
 
       <Header variant="home" wordmark={settings.wordmark} />
 
@@ -165,32 +168,39 @@ export default async function HomePage() {
           </ScrollReveal>
           <div className={styles.workGrid}>
             {selectedWork.map((project) => (
-              <ScrollReveal key={project.slug} y={26} duration={1} className={styles.workCard}>
-                <div className={styles.workCardFrame}>
-                  <div className={styles.workCardImageInner}>
-                    <Parallax
-                      src={project.image}
-                      alt={project.name}
-                      oversizeHeight={114}
-                      offsetTop={-7}
-                      sizes="(min-width: 768px) 50vw, 100vw"
-                    />
-                    <div className={styles.insetBorder} style={{ inset: 13 }} />
+              <Link
+                key={project.slug}
+                href={`/works/${project.slug}`}
+                data-cursor-label="View Project"
+                className={styles.workCardLink}
+              >
+                <ScrollReveal y={26} duration={1} className={styles.workCard}>
+                  <div className={styles.workCardFrame}>
+                    <div className={styles.workCardImageInner}>
+                      <Parallax
+                        src={project.image}
+                        alt={project.name}
+                        oversizeHeight={114}
+                        offsetTop={-7}
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                      />
+                      <div className={styles.insetBorder} style={{ inset: 13 }} />
+                    </div>
                   </div>
-                </div>
-                <PlanBadgeSvg />
-                <div className={styles.workCardTitleRow}>
-                  <h3 className={styles.workCardTitle}>{project.name}</h3>
-                  <span className={styles.workCardYear}>{project.year}</span>
-                </div>
-                <div className={styles.workCardMeta}>
-                  <span className={styles.nowrap}>{project.location}</span>
-                  <span className={styles.metaDivider}>/</span>
-                  <span className={styles.nowrap}>{project.area}</span>
-                  <span className={styles.metaDivider}>/</span>
-                  <span className={styles.nowrap}>{project.tag}</span>
-                </div>
-              </ScrollReveal>
+                  <PlanBadgeSvg />
+                  <div className={styles.workCardTitleRow}>
+                    <h3 className={styles.workCardTitle}>{project.name}</h3>
+                    <span className={styles.workCardYear}>{project.year}</span>
+                  </div>
+                  <div className={styles.workCardMeta}>
+                    <span className={styles.nowrap}>{project.location}</span>
+                    <span className={styles.metaDivider}>/</span>
+                    <span className={styles.nowrap}>{project.area}</span>
+                    <span className={styles.metaDivider}>/</span>
+                    <span className={styles.nowrap}>{project.tag}</span>
+                  </div>
+                </ScrollReveal>
+              </Link>
             ))}
           </div>
           <ScrollReveal y={16} duration={0.9} className={styles.workCta}>
