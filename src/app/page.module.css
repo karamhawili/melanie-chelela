@@ -51,7 +51,7 @@
   box-sizing: border-box;
   padding: clamp(48px, 8vh, 96px) clamp(40px, 7vw, 120px) clamp(48px, 7vh, 84px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.18fr);
   align-items: start;
   gap: clamp(40px, 6vw, 104px);
 }
@@ -97,7 +97,7 @@
 .heroPhotoWrap {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 560px;
   justify-self: end;
 }
 
@@ -110,7 +110,7 @@
 
 .photoInner {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 4.3;
   overflow: hidden;
   background: var(--ph);
 }
@@ -123,9 +123,9 @@
 
 .planCard {
   position: absolute;
-  left: -48px;
-  bottom: -40px;
-  width: 208px;
+  left: -50px;
+  bottom: -42px;
+  width: 224px;
   border: 1px solid rgba(201, 169, 106, 0.3);
   padding: 16px;
   background: var(--panel);
@@ -136,18 +136,18 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 12px;
+  margin-bottom: 13px;
 }
 
 .planCardLabel {
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.26em;
   color: var(--meta);
   text-transform: uppercase;
 }
 
 .planCardScale {
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.14em;
   color: var(--g);
   font-variant-numeric: tabular-nums;
@@ -453,8 +453,8 @@
   }
 
   .planCard {
-    left: -16px;
-    bottom: -24px;
+    left: -10px;
+    bottom: -10px;
     width: 160px;
     padding: 12px;
   }
