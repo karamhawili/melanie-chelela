@@ -6,6 +6,8 @@ import { client } from './client'
 
 // Draft-mode / Visual Editing is out of scope for now, so there's no
 // viewer-permission token to share with defineLive — published content only.
+// (Published-read auth for the now-private dataset lives on the base
+// `client` in ./client.ts, not here — serverToken only unlocks drafts.)
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: false,
