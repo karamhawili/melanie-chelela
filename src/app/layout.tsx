@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   title: "Melanie Chelela — Interior Architecture",
   description:
     "Studio Melanie Chelela, an interior-architecture practice based in Beirut, Lebanon.",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({

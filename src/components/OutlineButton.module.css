@@ -1,9 +1,12 @@
 .button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   border: 1px solid var(--g);
+  background: transparent;
   color: var(--g);
+  font-family: inherit;
   text-decoration: none;
   cursor: pointer;
   padding: 16px 32px;
