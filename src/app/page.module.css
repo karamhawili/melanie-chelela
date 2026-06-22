@@ -105,7 +105,7 @@
   position: relative;
   border: 1px solid rgba(201, 169, 106, 0.3);
   padding: 13px;
-  background: var(--frame);
+  background: transparent;
 }
 
 .photoInner {
@@ -250,7 +250,7 @@
 .workCardFrame {
   border: 1px solid rgba(201, 169, 106, 0.28);
   padding: 12px;
-  background: var(--frame);
+  background: transparent;
   transition: border-color 0.4s ease;
 }
 
@@ -455,8 +455,21 @@
   .planCard {
     left: -10px;
     bottom: -10px;
-    width: 160px;
-    padding: 12px;
+    width: 120px;
+    padding: 9px;
+  }
+
+  .planCardHeader {
+    margin-bottom: 8px;
+  }
+
+  .planCardLabel {
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
+  }
+
+  .planCardScale {
+    font-size: 7.5px;
   }
 
   .wallDivider {
