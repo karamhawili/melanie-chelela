@@ -40,7 +40,7 @@
 
 /* HERO */
 .hero {
-  padding: clamp(92px, 12vh, 146px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px);
+  padding: clamp(126px, calc(78px + 8vh), 174px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px);
 }
 
 .heroGrid {
@@ -277,7 +277,7 @@
 
 /* PLACEHOLDER CASE STUDY */
 .placeholderHero {
-  padding: clamp(92px, 12vh, 146px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px);
+  padding: clamp(126px, calc(78px + 8vh), 174px) clamp(24px, 6vw, 90px) clamp(34px, 5vh, 56px);
 }
 
 .placeholderEyebrowWrap {
@@ -385,6 +385,16 @@
 }
 
 @media (max-width: 480px) {
+  .hero,
+  .placeholderHero {
+    padding-top: clamp(100px, calc(58px + 6vh), 132px);
+  }
+
+  .heroTitle,
+  .placeholderTitle {
+    font-size: clamp(64px, 10.8vw, 208px);
+  }
+
   .placeholderFactsGrid {
     grid-template-columns: 1fr;
   }

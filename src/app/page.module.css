@@ -350,7 +350,7 @@
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1.2fr);
   gap: 28px;
-  align-items: baseline;
+  align-items: center;
   padding: 24px 0;
   border-top: 1px solid rgba(201, 169, 106, 0.12);
 }
@@ -444,8 +444,12 @@
 }
 
 @media (max-width: 480px) {
+  .main {
+    padding-top: 58px;
+  }
+
   .hero {
-    padding: clamp(48px, 8vh, 96px) 24px clamp(48px, 7vh, 84px);
+    padding: clamp(42px, 6vh, 74px) 24px clamp(48px, 7vh, 84px);
   }
 
   .planCard {
@@ -483,7 +487,7 @@
       "letter title"
       "description description";
     gap: 8px 16px;
-    align-items: start;
+    align-items: center;
   }
 
   .serviceLetter {

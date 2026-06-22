@@ -27,5 +27,10 @@
 @media (max-width: 480px) {
   .label {
     white-space: normal;
+    font-size: 9.5px;
+  }
+
+  .number {
+    font-size: 9.5px;
   }
 }

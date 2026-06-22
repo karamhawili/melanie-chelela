@@ -96,6 +96,10 @@
   .destinations {
     gap: 16px;
   }
+
+  .projectCounter {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {

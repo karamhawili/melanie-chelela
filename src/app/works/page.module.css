@@ -11,7 +11,7 @@
 
 /* MASTHEAD */
 .masthead {
-  padding: clamp(100px, 15vh, 168px) clamp(24px, 6vw, 90px) clamp(40px, 7vh, 72px);
+  padding: clamp(126px, calc(78px + 8vh), 174px) clamp(24px, 6vw, 90px) clamp(40px, 7vh, 72px);
 }
 
 .mastheadInner {
@@ -278,6 +278,14 @@
 }
 
 @media (max-width: 480px) {
+  .masthead {
+    padding-top: clamp(100px, calc(58px + 6vh), 132px);
+  }
+
+  .mastheadTitle {
+    font-size: clamp(64px, 10.8vw, 208px);
+  }
+
   .masthead,
   .fullBleedInner,
   .twoUpSection,
