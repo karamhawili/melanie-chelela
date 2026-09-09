@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 // Shared between src/proxy.ts (verifies the cookie on every request) and
-// src/app/enter/actions.ts (issues the cookie on a correct password) so the
+// src/app/(site)/enter/actions.ts (issues the cookie on a correct password) so the
 // cookie name, expiry, and signing logic can't drift out of sync.
 
 export const GATE_COOKIE_NAME = "mc_gate";
