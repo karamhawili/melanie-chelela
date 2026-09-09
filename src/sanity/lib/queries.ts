@@ -32,7 +32,17 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(/* groq */ `
     ${PROJECT_CARD_FIELDS},
     seoTitle,
     seoDescription,
-    pageBuilder[]{ ... }
+    pageBuilder[]{
+      ...,
+      // Plans are contain-fitted, never cropped, so each frame needs the
+      // drawing's real proportions to size itself around a portrait PNG.
+      _type == "plansBlock" => {
+        plans[]{
+          ...,
+          "aspectRatio": image.asset->metadata.dimensions.aspectRatio
+        }
+      }
+    }
   }
 `);
 

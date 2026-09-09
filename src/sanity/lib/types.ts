@@ -21,6 +21,8 @@ export interface Plate {
   alt: string;
   fig: string;
   label: string;
+  /** Intrinsic width ÷ height of the asset — only projected where a block asks for it (plans). */
+  aspectRatio?: number;
 }
 
 export interface Fact {
@@ -142,6 +144,18 @@ export interface TextImageBlock {
   plate: Plate;
 }
 
+export interface PlansBlock {
+  _key: string;
+  _type: "plansBlock";
+  sectionNumber?: string;
+  eyebrowLabel?: string;
+  metaLabel?: string;
+  /** 1–4 transparent drawings; the count drives the layout. */
+  plans: Plate[];
+  /** Optional width ÷ height override shared by every frame. */
+  aspectRatio?: string;
+}
+
 export interface CreditsBlock {
   _key: string;
   _type: "creditsBlock";
@@ -158,4 +172,5 @@ export type CaseStudyBlock =
   | TwoUpImageBlock
   | QuotePortraitBlock
   | TextImageBlock
+  | PlansBlock
   | CreditsBlock;

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Eyebrow from "@/components/Eyebrow";
@@ -32,6 +33,7 @@ import type {
   TwoUpImageBlock,
   QuotePortraitBlock,
   TextImageBlock,
+  PlansBlock,
   CreditsBlock,
 } from "@/sanity/lib/types";
 import styles from "./page.module.css";
@@ -281,6 +283,74 @@ function TextImageSection({ block }: { block: TextImageBlock }) {
   );
 }
 
+// Transparent PNG drawings are never cropped: each frame takes the drawing's
+// own proportions (from asset metadata) and the PNG is `contain`-fitted
+// inside it. The CSS caps frame height, so a portrait plan's width follows
+// from that cap instead of filling the column. The fallback ratio is only
+// used when metadata is missing and no override is set.
+const PLAN_DEFAULT_RATIO: Record<number, number> = { 1: 1.7, 2: 1.3, 3: 1, 4: 0.95 };
+
+function parseRatio(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+function PlansSection({ block }: { block: PlansBlock }) {
+  const count = Math.min(Math.max(block.plans.length, 1), 4);
+  const hasHeader = Boolean(block.sectionNumber || block.eyebrowLabel || block.metaLabel);
+  const overrideRatio = parseRatio(block.aspectRatio);
+  const columnVw = Math.round(100 / count);
+
+  return (
+    <section className={styles.plans}>
+      <div className={styles.plansInner}>
+        {hasHeader && (
+          <ScrollReveal y={16} duration={0.9} className={`${styles.sectionHeaderRow} ${styles.headerGap}`}>
+            <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel ?? ""} />
+            {block.metaLabel && <span className={styles.metaLabel}>{block.metaLabel}</span>}
+          </ScrollReveal>
+        )}
+        <div
+          className={styles.plansGrid}
+          data-count={count}
+          style={{ "--plan-count": count } as React.CSSProperties}
+        >
+          {block.plans.map((plan, i) => {
+            const ratio = overrideRatio ?? plan.aspectRatio ?? PLAN_DEFAULT_RATIO[count];
+            return (
+              <ScrollReveal key={`${plan.src}-${i}`} y={24} duration={1} delay={i * 0.08}>
+                <figure
+                  data-cursor-label={plan.label}
+                  className={styles.planFigure}
+                  style={{ "--plan-ratio": ratio } as React.CSSProperties}
+                >
+                  <div className={styles.planDrawing}>
+                    <Image
+                      src={plan.src}
+                      alt={plan.alt}
+                      fill
+                      sizes={`(min-width: 1024px) ${columnVw}vw, (min-width: 480px) ${count >= 3 ? 50 : 100}vw, 100vw`}
+                      className={styles.planImage}
+                    />
+                    <div className={styles.planInset} />
+                  </div>
+                  {(plan.fig || plan.label) && (
+                    <figcaption className={styles.planCaption}>
+                      <span>{plan.label}</span>
+                      {plan.fig && <span className={styles.planCaptionFig}>{plan.fig}</span>}
+                    </figcaption>
+                  )}
+                </figure>
+              </ScrollReveal>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CreditsSection({ block }: { block: CreditsBlock }) {
   return (
     <section className={styles.credits}>
@@ -317,6 +387,8 @@ function CaseStudyBuilder({ blocks }: { blocks: CaseStudyBlock[] }) {
             return <QuotePortraitSection key={block._key} block={block} />;
           case "textImageBlock":
             return <TextImageSection key={block._key} block={block} />;
+          case "plansBlock":
+            return <PlansSection key={block._key} block={block} />;
           case "creditsBlock":
             return <CreditsSection key={block._key} block={block} />;
           default:

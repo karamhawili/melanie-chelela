@@ -348,6 +348,80 @@
 }
 
 /* RESPONSIVE */
+/* TECHNICAL PLANS */
+.plans {
+  /* Tallest a drawing frame may get — a portrait plan's width follows from this. */
+  --plan-max-h: min(72vh, 720px);
+  padding: clamp(60px, 11vh, 130px) clamp(24px, 6vw, 90px);
+}
+
+.plansInner {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--plan-count, 1), minmax(0, 1fr));
+  align-items: end;
+  gap: clamp(16px, 2.4vw, 38px);
+}
+
+/* A lone plan is the hero of its section — wide, but not stretched to the full 1500px rail. */
+.plansGrid[data-count="1"] {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.planFigure {
+  /* Never wider than the column; for tall drawings, no wider than the
+     height cap allows at the drawing's own ratio. Centered in its cell. */
+  width: min(100%, calc(var(--plan-max-h) * var(--plan-ratio, 1.7)));
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(201, 169, 106, 0.3);
+}
+
+.planDrawing {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--plan-ratio, 1.7);
+  overflow: hidden;
+}
+
+.planImage {
+  object-fit: contain;
+  object-position: center;
+}
+
+.planInset {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(201, 169, 106, 0.16);
+  pointer-events: none;
+}
+
+.planCaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px 14px;
+  border-top: 1px solid rgba(201, 169, 106, 0.22);
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.planCaptionFig {
+  color: var(--g);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .heroGrid,
   .overviewGrid,
@@ -371,6 +445,15 @@
     grid-template-columns: 1fr;
   }
 
+  .plansGrid[data-count="3"],
+  .plansGrid[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .plansGrid[data-count="2"] {
+    grid-template-columns: 1fr;
+  }
+
   .sectionHeaderRow {
     flex-wrap: wrap;
   }
@@ -385,6 +468,10 @@
 }
 
 @media (max-width: 480px) {
+  .plansGrid {
+    grid-template-columns: 1fr;
+  }
+
   .hero,
   .placeholderHero {
     padding-top: clamp(100px, calc(58px + 6vh), 132px);

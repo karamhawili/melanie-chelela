@@ -12,6 +12,7 @@ import { twoUpImageBlockType } from "./blocks/twoUpImageBlock";
 import { quotePortraitBlockType } from "./blocks/quotePortraitBlock";
 import { textImageBlockType } from "./blocks/textImageBlock";
 import { creditsBlockType } from "./blocks/creditsBlock";
+import { plansBlockType } from "./blocks/plansBlock";
 
 import { projectType } from "./documents/project";
 import { homePageType } from "./documents/homePage";
@@ -38,5 +39,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     quotePortraitBlockType,
     textImageBlockType,
     creditsBlockType,
+    plansBlockType,
   ],
 };

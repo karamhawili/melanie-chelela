@@ -47,7 +47,7 @@
 .hero {
   scroll-margin-top: 80px;
   position: relative;
-  min-height: calc(100vh - 78px);
+  min-height: min(calc(100vh - 78px), 900px);
   box-sizing: border-box;
   padding: clamp(48px, 8vh, 96px) clamp(40px, 7vw, 120px) clamp(48px, 7vh, 84px);
   display: grid;

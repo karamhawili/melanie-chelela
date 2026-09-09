@@ -26,6 +26,7 @@ interface RawPlate {
   image?: RawImage;
   fig?: string;
   label?: string;
+  aspectRatio?: number | null;
 }
 
 interface RawFact {
@@ -106,6 +107,7 @@ export function toPlate(raw: RawPlate | undefined): Plate {
     alt: raw?.image?.alt ?? "",
     fig: raw?.fig ?? "",
     label: raw?.label ?? "",
+    aspectRatio: typeof raw?.aspectRatio === "number" && raw.aspectRatio > 0 ? raw.aspectRatio : undefined,
   };
 }
 
@@ -223,6 +225,16 @@ function toCaseStudyBlock(block: Record<string, unknown>): CaseStudyBlock | null
         eyebrowLabel: String(block.eyebrowLabel ?? ""),
         heading: String(block.heading ?? ""),
         plate: toPlate(block.plate as RawPlate | undefined),
+      };
+    case "plansBlock":
+      return {
+        _key: key,
+        _type: "plansBlock",
+        sectionNumber: block.sectionNumber ? String(block.sectionNumber) : undefined,
+        eyebrowLabel: block.eyebrowLabel ? String(block.eyebrowLabel) : undefined,
+        metaLabel: block.metaLabel ? String(block.metaLabel) : undefined,
+        plans: ((block.plans as RawPlate[] | undefined) ?? []).slice(0, 4).map(toPlate),
+        aspectRatio: block.aspectRatio ? String(block.aspectRatio) : undefined,
       };
     case "creditsBlock":
       return {
