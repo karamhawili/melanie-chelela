@@ -4,6 +4,7 @@ import type {
   CaseStudyBlock,
   Fact,
   HomePageContent,
+  Plan,
   Plate,
   Project,
   ServiceItem,
@@ -23,10 +24,21 @@ interface RawImage {
 }
 
 interface RawPlate {
+  _type?: "plate";
   image?: RawImage;
   fig?: string;
   label?: string;
   aspectRatio?: number | null;
+}
+
+interface RawPdfPlate {
+  _type?: "pdfPlate";
+  /** Projected in the query as `file.asset->url`. */
+  url?: string;
+  alt?: string;
+  fig?: string;
+  label?: string;
+  aspectRatio?: string | null;
 }
 
 interface RawFact {
@@ -109,6 +121,26 @@ export function toPlate(raw: RawPlate | undefined): Plate {
     label: raw?.label ?? "",
     aspectRatio: typeof raw?.aspectRatio === "number" && raw.aspectRatio > 0 ? raw.aspectRatio : undefined,
   };
+}
+
+// A plans array mixes `plate` (image) and `pdfPlate` members. Both collapse
+// to the same shape — a URL plus caption fields — so the renderer only has
+// to branch on `kind`. A PDF's ratio is an optional string the editor types
+// (Sanity stores no page dimensions); when it's absent the browser measures
+// page one and the frame settles to it.
+export function toPlan(raw: RawPlate | RawPdfPlate | undefined): Plan {
+  if (raw?._type === "pdfPlate") {
+    const ratio = Number(raw.aspectRatio);
+    return {
+      kind: "pdf",
+      src: raw.url ?? "",
+      alt: raw.alt ?? "",
+      fig: raw.fig ?? "",
+      label: raw.label ?? "",
+      aspectRatio: Number.isFinite(ratio) && ratio > 0 ? ratio : undefined,
+    };
+  }
+  return { kind: "image", ...toPlate(raw as RawPlate | undefined) };
 }
 
 export function toFact(raw: RawFact | undefined): Fact {
@@ -233,7 +265,11 @@ function toCaseStudyBlock(block: Record<string, unknown>): CaseStudyBlock | null
         sectionNumber: block.sectionNumber ? String(block.sectionNumber) : undefined,
         eyebrowLabel: block.eyebrowLabel ? String(block.eyebrowLabel) : undefined,
         metaLabel: block.metaLabel ? String(block.metaLabel) : undefined,
-        plans: ((block.plans as RawPlate[] | undefined) ?? []).slice(0, 4).map(toPlate),
+        plans: ((block.plans as Array<RawPlate | RawPdfPlate> | undefined) ?? [])
+          .slice(0, 4)
+          .map(toPlan)
+          // A still-empty draft plate has no asset to draw.
+          .filter((plan) => plan.src !== ""),
         aspectRatio: block.aspectRatio ? String(block.aspectRatio) : undefined,
       };
     case "creditsBlock":

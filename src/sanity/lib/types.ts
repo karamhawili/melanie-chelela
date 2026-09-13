@@ -144,14 +144,23 @@ export interface TextImageBlock {
   plate: Plate;
 }
 
+/**
+ * A plate in a plans set. `kind` decides how `src` is drawn: an "image"
+ * goes through next/image, a "pdf" is rasterised into a canvas in the
+ * browser so it reads as a drawing rather than as a document.
+ */
+export interface Plan extends Plate {
+  kind: "image" | "pdf";
+}
+
 export interface PlansBlock {
   _key: string;
   _type: "plansBlock";
   sectionNumber?: string;
   eyebrowLabel?: string;
   metaLabel?: string;
-  /** 1–4 transparent drawings; the count drives the layout. */
-  plans: Plate[];
+  /** 1–4 drawings; the count drives the layout. */
+  plans: Plan[];
   /** Optional width ÷ height override shared by every frame. */
   aspectRatio?: string;
 }

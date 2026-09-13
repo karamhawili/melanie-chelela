@@ -12,7 +12,12 @@ export const urlFor = (source: SanityImageSource) => {
 // Resolves a Sanity image value to a plain CDN URL string — the one place
 // this happens, so every component keeps its existing `src: string` prop
 // instead of threading {asset, hotspot, crop} through the whole tree.
+//
+// Deliberately bare: no width, quality or format. Those are added per
+// rendered size by src/sanity/lib/imageLoader.ts, which next/image calls for
+// each srcset entry. An editor crop still lands here as `rect=`, which the
+// loader preserves.
 export function resolveImageUrl(source: SanityImageSource | undefined | null): string {
   if (!source) return ''
-  return urlFor(source).width(2400).auto('format').url()
+  return urlFor(source).url()
 }

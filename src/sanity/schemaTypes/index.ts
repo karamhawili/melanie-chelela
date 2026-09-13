@@ -1,6 +1,7 @@
 import { type SchemaTypeDefinition } from "sanity";
 
 import { plateType } from "./objects/plate";
+import { pdfPlateType } from "./objects/pdfPlate";
 import { factType } from "./objects/fact";
 import { serviceItemType } from "./objects/serviceItem";
 
@@ -28,6 +29,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     siteSettingsType,
     // objects
     plateType,
+    pdfPlateType,
     factType,
     serviceItemType,
     // blocks

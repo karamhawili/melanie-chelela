@@ -36,10 +36,17 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(/* groq */ `
       ...,
       // Plans are contain-fitted, never cropped, so each frame needs the
       // drawing's real proportions to size itself around a portrait PNG.
+      // A PDF plate carries no dimensions in Sanity — the browser measures
+      // page one — so it only needs the asset URL to fetch.
       _type == "plansBlock" => {
         plans[]{
           ...,
-          "aspectRatio": image.asset->metadata.dimensions.aspectRatio
+          _type == "plate" => {
+            "aspectRatio": image.asset->metadata.dimensions.aspectRatio
+          },
+          _type == "pdfPlate" => {
+            "url": file.asset->url
+          }
         }
       }
     }

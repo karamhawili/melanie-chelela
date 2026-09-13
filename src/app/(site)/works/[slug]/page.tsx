@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Eyebrow from "@/components/Eyebrow";
@@ -7,6 +6,7 @@ import FactItem from "@/components/FactItem";
 import CaptionChip from "@/components/CaptionChip";
 import Parallax from "@/components/Parallax";
 import BeforeAfter from "@/components/BeforeAfter";
+import PlanFigure from "@/components/PlanFigure";
 import PagerLink from "@/components/PagerLink";
 import ScrollReveal from "@/components/ScrollReveal";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -283,11 +283,12 @@ function TextImageSection({ block }: { block: TextImageBlock }) {
   );
 }
 
-// Transparent PNG drawings are never cropped: each frame takes the drawing's
-// own proportions (from asset metadata) and the PNG is `contain`-fitted
-// inside it. The CSS caps frame height, so a portrait plan's width follows
-// from that cap instead of filling the column. The fallback ratio is only
-// used when metadata is missing and no override is set.
+// Drawings are never cropped: each frame takes the drawing's own
+// proportions and the artwork is `contain`-fitted inside it. An image plan
+// gets those proportions from Sanity's asset metadata; a PDF plan has none
+// stored, so PlanFigure measures page one in the browser and swaps the
+// fallback out. The CSS caps frame height, so a portrait plan's width
+// follows from that cap instead of filling the column.
 const PLAN_DEFAULT_RATIO: Record<number, number> = { 1: 1.7, 2: 1.3, 3: 1, 4: 0.95 };
 
 function parseRatio(value: string | undefined): number | undefined {
@@ -317,31 +318,15 @@ function PlansSection({ block }: { block: PlansBlock }) {
           style={{ "--plan-count": count } as React.CSSProperties}
         >
           {block.plans.map((plan, i) => {
-            const ratio = overrideRatio ?? plan.aspectRatio ?? PLAN_DEFAULT_RATIO[count];
+            const declaredRatio = overrideRatio ?? plan.aspectRatio;
             return (
               <ScrollReveal key={`${plan.src}-${i}`} y={24} duration={1} delay={i * 0.08}>
-                <figure
-                  data-cursor-label={plan.label}
-                  className={styles.planFigure}
-                  style={{ "--plan-ratio": ratio } as React.CSSProperties}
-                >
-                  <div className={styles.planDrawing}>
-                    <Image
-                      src={plan.src}
-                      alt={plan.alt}
-                      fill
-                      sizes={`(min-width: 1024px) ${columnVw}vw, (min-width: 480px) ${count >= 3 ? 50 : 100}vw, 100vw`}
-                      className={styles.planImage}
-                    />
-                    <div className={styles.planInset} />
-                  </div>
-                  {(plan.fig || plan.label) && (
-                    <figcaption className={styles.planCaption}>
-                      <span>{plan.label}</span>
-                      {plan.fig && <span className={styles.planCaptionFig}>{plan.fig}</span>}
-                    </figcaption>
-                  )}
-                </figure>
+                <PlanFigure
+                  plan={plan}
+                  ratio={declaredRatio ?? PLAN_DEFAULT_RATIO[count]}
+                  measurable={declaredRatio === undefined}
+                  sizes={`(min-width: 1024px) ${columnVw}vw, (min-width: 480px) ${count >= 3 ? 50 : 100}vw, 100vw`}
+                />
               </ScrollReveal>
             );
           })}
