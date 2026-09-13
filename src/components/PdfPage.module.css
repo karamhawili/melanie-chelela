@@ -1,0 +1,63 @@
+.host {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* max-width/height rather than fill: the canvas keeps the page's own
+   proportions, so an override ratio letterboxes instead of stretching —
+   the same contain behaviour `.planImage` gets from object-fit. */
+.canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.host[data-state="drawn"] .canvas {
+  opacity: 1;
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgba(201, 169, 106, 0.11) 50%,
+    transparent 68%
+  );
+  background-size: 280% 100%;
+  animation: planShimmer 1.9s ease-in-out infinite;
+}
+
+@keyframes planShimmer {
+  from {
+    background-position: 140% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+.failed {
+  position: absolute;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
+
+  .shimmer {
+    animation: none;
+  }
+}

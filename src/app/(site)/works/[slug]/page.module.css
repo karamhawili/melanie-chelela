@@ -373,54 +373,9 @@
   margin: 0 auto;
 }
 
-.planFigure {
-  /* Never wider than the column; for tall drawings, no wider than the
-     height cap allows at the drawing's own ratio. Centered in its cell. */
-  width: min(100%, calc(var(--plan-max-h) * var(--plan-ratio, 1.7)));
-  margin: 0 auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgba(201, 169, 106, 0.3);
-}
-
-.planDrawing {
-  position: relative;
-  width: 100%;
-  aspect-ratio: var(--plan-ratio, 1.7);
-  overflow: hidden;
-}
-
-.planImage {
-  object-fit: contain;
-  object-position: center;
-}
-
-.planInset {
-  position: absolute;
-  inset: 10px;
-  border: 1px solid rgba(201, 169, 106, 0.16);
-  pointer-events: none;
-}
-
-.planCaption {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px 16px 14px;
-  border-top: 1px solid rgba(201, 169, 106, 0.22);
-  font-size: 9.5px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
-
-.planCaptionFig {
-  color: var(--g);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
+/* .planFigure / .planDrawing / .planImage / .planInset / .planCaption now
+   live in PlanFigure.module.css — the frame became a client component when
+   plans gained a PDF variant. `--plan-max-h` above still cascades into it. */
 
 @media (max-width: 768px) {
   .heroGrid,
