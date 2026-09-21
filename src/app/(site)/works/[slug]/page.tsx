@@ -468,7 +468,7 @@ export default async function ProjectPage({ params }: PageParams) {
           bordered
           padding="clamp(44px, 8vh, 92px) clamp(24px, 5vw, 72px)"
           gap="clamp(16px, 2.4vh, 26px)"
-          titleSize="clamp(24px, 3vw, 40px)"
+          titleSize="clamp(21px, 2.6vw, 34px)"
         />
         <PagerLink
           href={`/works/${next.slug}`}
@@ -478,7 +478,7 @@ export default async function ProjectPage({ params }: PageParams) {
           align="end"
           padding="clamp(44px, 8vh, 92px) clamp(24px, 5vw, 72px)"
           gap="clamp(16px, 2.4vh, 26px)"
-          titleSize="clamp(34px, 6vw, 86px)"
+          titleSize="clamp(30px, 5.1vw, 72px)"
         />
       </nav>
 

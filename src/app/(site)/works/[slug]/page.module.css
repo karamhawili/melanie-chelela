@@ -47,7 +47,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
   gap: clamp(34px, 6vw, 96px);
-  align-items: end;
+  align-items: start;
 }
 
 .heroEyebrowWrap {
@@ -60,7 +60,7 @@
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: -0.01em;
-  font-size: clamp(44px, 7.4vw, 122px);
+  font-size: clamp(38px, 6vw, 98px);
 }
 
 .heroTitleLine {
@@ -117,7 +117,7 @@
   margin: 0;
   font-family: var(--font-italiana), serif;
   font-weight: 400;
-  font-size: clamp(28px, 3.7vw, 52px);
+  font-size: clamp(22px, 2.8vw, 38px);
   line-height: 1.12;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -203,7 +203,7 @@
   margin: 0;
   font-family: var(--font-italiana), serif;
   font-weight: 400;
-  font-size: clamp(30px, 4.6vw, 68px);
+  font-size: clamp(27px, 3.9vw, 56px);
   line-height: 1.08;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -233,7 +233,7 @@
   margin: 22px 0 0;
   font-family: var(--font-italiana), serif;
   font-weight: 400;
-  font-size: clamp(26px, 3vw, 44px);
+  font-size: clamp(23px, 2.6vw, 38px);
   line-height: 1.14;
   color: var(--ink);
 }
@@ -290,7 +290,7 @@
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: -0.01em;
-  font-size: clamp(44px, 7.4vw, 122px);
+  font-size: clamp(38px, 6vw, 98px);
   color: var(--ink);
 }
 
@@ -334,7 +334,7 @@
   max-width: 700px;
   font-family: var(--font-italiana), serif;
   font-weight: 400;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(25px, 3.4vw, 41px);
   line-height: 1.12;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -434,7 +434,7 @@
 
   .heroTitle,
   .placeholderTitle {
-    font-size: clamp(64px, 10.8vw, 208px);
+    font-size: clamp(56px, 8.8vw, 164px);
   }
 
   .placeholderFactsGrid {

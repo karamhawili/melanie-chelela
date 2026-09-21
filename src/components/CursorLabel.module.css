@@ -12,7 +12,7 @@
   gap: 8px;
   padding: 9px 15px;
   background: var(--g);
-  color: #1f1810;
+  color: #2b1a0f;
   border-radius: 100px;
   white-space: nowrap;
 }
@@ -25,7 +25,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #1f1810;
+  background: #2b1a0f;
 }
 
 .text {
