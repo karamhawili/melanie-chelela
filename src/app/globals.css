@@ -1,7 +1,7 @@
 :root {
   /* Ivory theme — see design_handoff_mc_portfolio/README.md "Design Tokens > Color" */
   --bg: #f1ebdf;
-  --ink: #2c2620;
+  --ink: #40291a;
   --body: #5f574b;
   --dim: #857c6c;
   --meta: #9a9078;
@@ -58,5 +58,5 @@ img {
 
 ::selection {
   background: rgba(201, 169, 106, 0.32);
-  color: #2c2620;
+  color: var(--ink);
 }
