@@ -7,6 +7,19 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export const GATE_COOKIE_NAME = "mc_gate";
 export const GATE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
+// Same attributes whether the cookie is issued by the /enter form or an
+// /invite link, so the two can never drift apart.
+export function gateCookieOptions() {
+  return {
+    name: GATE_COOKIE_NAME,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    maxAge: GATE_MAX_AGE_SECONDS,
+    path: "/",
+  };
+}
+
 function sign(payload: string, secret: string): string {
   return createHmac("sha256", secret).update(payload).digest("hex");
 }

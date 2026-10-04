@@ -3,8 +3,8 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { GATE_COOKIE_NAME, GATE_MAX_AGE_SECONDS, createGateCookieValue } from "@/lib/siteGate";
-import { fetchSitePassword, passwordFingerprint, requireGateSecret } from "@/lib/sitePassword";
+import { createGateCookieValue, gateCookieOptions } from "@/lib/siteGate";
+import { fetchSitePassword, passwordFingerprint, requireGateSecret } from "@/lib/siteAccess";
 
 function timingSafeStringEqual(a: string, b: string): boolean {
   const hashA = createHash("sha256").update(a).digest();
@@ -34,13 +34,8 @@ export async function unlockSite(formData: FormData) {
   const secret = requireGateSecret();
 
   (await cookies()).set({
-    name: GATE_COOKIE_NAME,
+    ...gateCookieOptions(),
     value: createGateCookieValue(secret, passwordFingerprint(expected, secret)),
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: GATE_MAX_AGE_SECONDS,
-    path: "/",
   });
 
   redirect(redirectTo);
