@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { GATE_COOKIE_NAME, parseGateCookie } from "@/lib/siteGate";
-import { isCurrentPasswordFingerprint } from "@/lib/sitePassword";
+import { isCurrentFingerprint } from "@/lib/siteAccess";
 
 const GATE_PATH = "/enter";
+const INVITE_PREFIX = "/invite/";
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Always reachable pre-auth — both for the redirect target itself and so
-  // its password-submit Server Action (a POST to this same route) isn't
-  // silently skipped by the matcher below.
-  if (pathname === GATE_PATH) {
+  // Always reachable pre-auth: the gate itself (also so its password-submit
+  // Server Action, a POST to this same route, isn't silently skipped by the
+  // matcher below) and guest invite links, which do their own check.
+  if (pathname === GATE_PATH || pathname.startsWith(INVITE_PREFIX)) {
     return NextResponse.next();
   }
 
@@ -19,7 +20,7 @@ export async function proxy(request: NextRequest) {
     request.cookies.get(GATE_COOKIE_NAME)?.value,
     process.env.SITE_PASSWORD_SECRET
   );
-  if (cookie && (await isCurrentPasswordFingerprint(cookie.passwordFingerprint))) {
+  if (cookie && (await isCurrentFingerprint(cookie.passwordFingerprint))) {
     return NextResponse.next();
   }
 

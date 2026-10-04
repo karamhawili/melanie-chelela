@@ -21,7 +21,12 @@ interface PageProps {
 export default async function EnterPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const redirectTo = params.redirect ?? "/";
-  const hasError = params.error === "1";
+  const errorMessage =
+    params.error === "1"
+      ? "Incorrect password — please try again."
+      : params.error === "invite"
+        ? "That invitation link is no longer active."
+        : null;
 
   const { data: rawSettings } = await sanityFetch({ query: SITE_SETTINGS_QUERY });
   const settings = toSiteSettings((rawSettings as RawSiteSettings | null) ?? {});
@@ -41,9 +46,7 @@ export default async function EnterPage({ searchParams }: PageProps) {
         <form action={unlockSite} className={styles.form}>
           <input type="hidden" name="redirect" value={redirectTo} />
           <PasswordField />
-          {hasError && (
-            <p className={styles.error}>Incorrect password — please try again.</p>
-          )}
+          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
           <button type="submit" className={`${outlineButtonStyles.button} ${styles.submit}`}>
             <span className={outlineButtonStyles.label}>Enter</span>
           </button>

@@ -39,6 +39,10 @@ export default defineConfig({
       if (SINGLETON_TYPES.has(schemaType)) {
         return prev.filter(({action}) => action !== 'duplicate' && action !== 'delete')
       }
+      // A duplicated guest entry would carry the same invite link.
+      if (schemaType === 'guestAccess') {
+        return prev.filter(({action}) => action !== 'duplicate')
+      }
       return prev
     },
   },

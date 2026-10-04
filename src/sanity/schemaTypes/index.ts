@@ -19,6 +19,7 @@ import { projectType } from "./documents/project";
 import { homePageType } from "./documents/homePage";
 import { worksPageType } from "./documents/worksPage";
 import { siteSettingsType } from "./documents/siteSettings";
+import { guestAccessType } from "./documents/guestAccess";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -27,6 +28,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     homePageType,
     worksPageType,
     siteSettingsType,
+    guestAccessType,
     // objects
     plateType,
     pdfPlateType,
