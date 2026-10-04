@@ -113,7 +113,10 @@ async function fetchValidFingerprints(): Promise<Set<string>> {
 // refresh (rate-limited), so a visitor who just came in through a brand-new
 // password or invite isn't bounced back to the gate while the cache is stale.
 
-const CACHE_TTL_MS = 30_000;
+// Together with the browser router cache (staleTimes in next.config.ts),
+// this bounds how long a revoked guest or a changed password keeps working:
+// about 40s worst case after publishing.
+const CACHE_TTL_MS = 10_000;
 const MIN_REFRESH_INTERVAL_MS = 2_000;
 
 let cached: { valid: Set<string>; fetchedAt: number } | null = null;
