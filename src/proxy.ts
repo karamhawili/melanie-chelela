@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { GATE_COOKIE_NAME, isValidGateCookie } from "@/lib/siteGate";
+import { GATE_COOKIE_NAME, parseGateCookie } from "@/lib/siteGate";
+import { isCurrentPasswordFingerprint } from "@/lib/sitePassword";
 
 const GATE_PATH = "/enter";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Always reachable pre-auth — both for the redirect target itself and so
@@ -14,8 +15,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const cookie = request.cookies.get(GATE_COOKIE_NAME)?.value;
-  if (isValidGateCookie(cookie, process.env.SITE_PASSWORD_SECRET)) {
+  const cookie = parseGateCookie(
+    request.cookies.get(GATE_COOKIE_NAME)?.value,
+    process.env.SITE_PASSWORD_SECRET
+  );
+  if (cookie && (await isCurrentPasswordFingerprint(cookie.passwordFingerprint))) {
     return NextResponse.next();
   }
 

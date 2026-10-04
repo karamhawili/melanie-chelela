@@ -47,6 +47,14 @@ export const siteSettingsType = defineType({
       initialValue: 28,
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "sitePassword",
+      title: "Site password",
+      type: "string",
+      description:
+        "What visitors type at the gate to view the site. Changing this and publishing signs everyone out immediately (including you) — re-enter with the new password. Visitors are never shown this value.",
+      validation: (rule) => rule.required().min(8),
+    }),
   ],
   preview: {
     prepare() {
