@@ -61,6 +61,15 @@ export const WORKS_PAGE_QUERY = defineQuery(/* groq */ `
   *[_id == "worksPage"][0]{ ... }
 `);
 
+// Fields are listed explicitly (not `...`) so the gate password never rides
+// along into page data. The gate reads it separately via src/lib/sitePassword.ts.
 export const SITE_SETTINGS_QUERY = defineQuery(/* groq */ `
-  *[_id == "siteSettings"][0]{ ... }
+  *[_id == "siteSettings"][0]{
+    wordmark,
+    footerCopyright,
+    footerCoordinates,
+    inquireEmail,
+    inquireAddress,
+    projectCounterTotal
+  }
 `);
