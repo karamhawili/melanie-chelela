@@ -54,6 +54,7 @@ export const guestAccessType = defineType({
       title: "First opened",
       type: "datetime",
       readOnly: true,
+      placeholder: "Not opened yet",
       description: "Set automatically the first time the link is opened.",
     }),
     defineField({
@@ -61,6 +62,7 @@ export const guestAccessType = defineType({
       title: "Last opened",
       type: "datetime",
       readOnly: true,
+      placeholder: "Not opened yet",
       description: "Updated automatically each time the link is opened.",
     }),
   ],
