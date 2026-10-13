@@ -7,6 +7,13 @@ interface HeaderProps {
   projectIndex?: number;
   projectTotal?: number;
   wordmark?: string;
+  /**
+   * "overlay" draws the header in white over a dark scrim for pages that
+   * open on a full-bleed image. Mount <HeaderToneSwitch /> on such a page
+   * and mark the hero with `data-header-sentinel`: once the hero scrolls
+   * out, the header falls back to the ivory translucent treatment.
+   */
+  tone?: "default" | "overlay";
 }
 
 const navItems = [
@@ -21,13 +28,14 @@ export default function Header({
   projectIndex,
   projectTotal,
   wordmark = "Melanie Chelela",
+  tone = "default",
 }: HeaderProps) {
   const isHome = variant === "home";
   const isWorks = variant === "works";
   const isProject = variant === "project";
 
   return (
-    <header className={`${styles.header} ${styles.translucent}`}>
+    <header className={`${styles.header} ${tone === "overlay" ? styles.overlay : styles.translucent}`}>
       <Link href={isHome ? "#top" : "/"} className={styles.wordmarkLink}>
         <span className={styles.wordmark}>{wordmark}</span>
       </Link>

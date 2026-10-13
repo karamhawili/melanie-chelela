@@ -116,6 +116,8 @@ export const projectType = defineType({
         defineArrayMember({ type: "quotePortraitBlock" }),
         defineArrayMember({ type: "textImageBlock" }),
         defineArrayMember({ type: "plansBlock" }),
+        defineArrayMember({ type: "materialsBlock" }),
+        defineArrayMember({ type: "furnitureBlock" }),
         defineArrayMember({ type: "creditsBlock" }),
       ],
     }),

@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
+import HeaderToneSwitch from "@/components/HeaderToneSwitch";
 import Footer from "@/components/Footer";
 import Eyebrow from "@/components/Eyebrow";
 import FactItem from "@/components/FactItem";
@@ -26,7 +28,6 @@ import type {
   Plate,
   Project,
   CaseStudyBlock,
-  CaseStudyHeroBlock,
   FullBleedImageBlock,
   OverviewBlock,
   BeforeAfterBlock,
@@ -34,6 +35,8 @@ import type {
   QuotePortraitBlock,
   TextImageBlock,
   PlansBlock,
+  MaterialsBlock,
+  FurnitureBlock,
   CreditsBlock,
 } from "@/sanity/lib/types";
 import styles from "./page.module.css";
@@ -58,20 +61,195 @@ export async function generateMetadata({ params }: PageParams) {
   };
 }
 
+/** Staggers a hero element's entrance: index × 0.12s after the curtain lifts. */
+function introStyle(index: number): React.CSSProperties {
+  return { "--i": index } as React.CSSProperties;
+}
+
+function withItalicPhrase(text: string, italic: string) {
+  const [before, after] = text.split(italic);
+  return (
+    <>
+      {before}
+      <span className={styles.italicGold}>{italic}</span>
+      {after}
+    </>
+  );
+}
+
+// --- Hero ---------------------------------------------------------------
+
+interface HeroContent {
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2?: string;
+  intro: string;
+  facts: Fact[];
+  plate: Plate;
+}
+
+/**
+ * The hero is the case study's opening image with its text set over it. The
+ * `caseStudyHero` block supplies the text; the `fullBleedImage` that follows
+ * it (the opening plate in every case study so far) supplies the image and
+ * is consumed, so it isn't drawn a second time below. A project without a
+ * case study yet builds the same hero from its card fields.
+ */
+function extractHero(project: Project, blocks: CaseStudyBlock[]): { hero: HeroContent; rest: CaseStudyBlock[] } {
+  const heroIndex = blocks.findIndex((b) => b._type === "caseStudyHero");
+  const cardPlate: Plate = { src: project.image, alt: project.name, fig: "", label: project.caption };
+
+  if (heroIndex === -1) {
+    return {
+      hero: {
+        eyebrow: project.tag,
+        titleLine1: project.name,
+        intro: project.description,
+        facts: [
+          { label: "Location", value: project.location },
+          { label: "Area", value: project.area },
+          { label: "Year", value: project.year, accent: true },
+        ],
+        plate: cardPlate,
+      },
+      rest: blocks,
+    };
+  }
+
+  const heroBlock = blocks[heroIndex];
+  if (heroBlock._type !== "caseStudyHero") throw new Error("unreachable");
+  const following = blocks[heroIndex + 1];
+  const openingPlate = following?._type === "fullBleedImage" ? following : null;
+
+  const rest = blocks.filter((b, i) => i !== heroIndex && (openingPlate === null || i !== heroIndex + 1));
+
+  return {
+    hero: {
+      eyebrow: heroBlock.eyebrow,
+      titleLine1: heroBlock.titleLine1,
+      titleLine2: heroBlock.titleLine2,
+      intro: heroBlock.intro,
+      facts: heroBlock.facts,
+      plate: openingPlate ? openingPlate.plate : cardPlate,
+    },
+    rest,
+  };
+}
+
+function HeroSection({ hero }: { hero: HeroContent }) {
+  return (
+    <section className={styles.hero} data-header-sentinel="">
+      <div className={styles.heroMedia}>
+        <Parallax src={hero.plate.src} alt={hero.plate.alt} priority sizes="100vw" />
+        <div aria-hidden="true" className={styles.heroShade} />
+      </div>
+      <div className={styles.heroContent}>
+        <div>
+          <div className={`${styles.intro} ${styles.heroEyebrowWrap}`} style={introStyle(0)}>
+            <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={hero.eyebrow} />
+          </div>
+          <h1 className={`${styles.intro} ${styles.heroTitle}`} style={introStyle(1)}>
+            <span className={styles.heroTitleLine}>{hero.titleLine1}</span>
+            {hero.titleLine2 && <span className={styles.heroTitleLineGold}>{hero.titleLine2}</span>}
+          </h1>
+        </div>
+        <div className={styles.intro} style={introStyle(2)}>
+          <p className={styles.heroIntro}>{hero.intro}</p>
+          <div className={styles.heroFactsGrid}>
+            {hero.facts.map((fact) => (
+              <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// --- Materials & Furniture ------------------------------------------------
+//
+// Each is a wordless collage that fits one viewport: up to six items on a
+// centred canvas, placed per nth-child in the stylesheet. Names surface only
+// as the cursor label on hover.
+
+const COLLAGE_LIMIT = 6;
+
+function MaterialsSection({ block }: { block: MaterialsBlock }) {
+  return (
+    <section className={styles.collageSection} aria-label="Materials">
+      <div className={`${styles.collage} ${styles.materialsCollage}`}>
+        {block.items.slice(0, COLLAGE_LIMIT).map((material, i) => (
+          <ScrollReveal
+            key={`${material.code}-${i}`}
+            y={18}
+            duration={1}
+            delay={i * 0.07}
+            className={`${styles.collageItem} ${styles.material}`}
+            data-cursor-label={[material.code, material.name].filter(Boolean).join(" — ")}
+          >
+            <div className={styles.swatchFrame}>
+              <div className={styles.swatch} style={material.image ? undefined : { background: material.tone }}>
+                {material.image && (
+                  <Image
+                    src={material.image.src}
+                    alt={material.image.alt}
+                    fill
+                    sizes="(min-width: 768px) 30vw, 45vw"
+                    style={{ objectFit: "cover" }}
+                  />
+                )}
+              </div>
+            </div>
+          </ScrollReveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FurnitureSection({ block }: { block: FurnitureBlock }) {
+  return (
+    <section className={styles.collageSection} aria-label="Furniture">
+      <div className={`${styles.collage} ${styles.furnitureCollage}`}>
+        {block.pieces.slice(0, COLLAGE_LIMIT).map((piece, i) => (
+          <ScrollReveal
+            key={`${piece.index}-${i}`}
+            y={22}
+            duration={1}
+            delay={i * 0.07}
+            className={`${styles.collageItem} ${styles.piece}`}
+            data-cursor-label={[piece.name, piece.designer].filter(Boolean).join(" — ")}
+          >
+            <figure className={styles.pieceFigure}>
+              <Parallax
+                src={piece.image.src}
+                alt={piece.image.alt}
+                oversizeHeight={112}
+                offsetTop={-6}
+                sizes="(min-width: 768px) 30vw, 45vw"
+              />
+            </figure>
+          </ScrollReveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// --- Plates & page-builder blocks ----------------------------------------
+
 function FullBleedPlate({
   plate,
   height = "clamp(440px, 92vh, 1040px)",
   cursorLabel,
-  priority,
 }: {
   plate: Plate;
   height?: string;
   cursorLabel: string;
-  priority?: boolean;
 }) {
   return (
     <figure data-cursor-label={cursorLabel} className={styles.fullBleedFigure} style={{ height }}>
-      <Parallax src={plate.src} alt={plate.alt} priority={priority} sizes="100vw" />
+      <Parallax src={plate.src} alt={plate.alt} sizes="100vw" />
       <CaptionChip fig={plate.fig} label={plate.label} style={{ left: "clamp(18px, 3vw, 34px)", bottom: 20 }} />
     </figure>
   );
@@ -104,17 +282,6 @@ function SimplePlate({
   );
 }
 
-function withItalicPhrase(text: string, italic: string) {
-  const [before, after] = text.split(italic);
-  return (
-    <>
-      {before}
-      <span className={styles.italicGold}>{italic}</span>
-      {after}
-    </>
-  );
-}
-
 function FactGrid({ facts, maxWidth = 440 }: { facts: Fact[]; maxWidth?: number }) {
   return (
     <div className={styles.factGrid} style={{ maxWidth }}>
@@ -125,38 +292,8 @@ function FactGrid({ facts, maxWidth = 440 }: { facts: Fact[]; maxWidth?: number 
   );
 }
 
-// --- One render component per page-builder block type ---
-
-function CaseStudyHeroSection({ block }: { block: CaseStudyHeroBlock }) {
-  return (
-    <section className={styles.hero}>
-      <div className={styles.heroGrid}>
-        <div>
-          <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
-            <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={block.eyebrow} />
-          </ScrollReveal>
-          <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
-            <span className={styles.heroTitleLine}>{block.titleLine1}</span>
-            <span className={styles.heroTitleLineGold}>{block.titleLine2}</span>
-          </ScrollReveal>
-        </div>
-        <ScrollReveal y={18} duration={1} delay={0.15} className={styles.heroIntroWrap}>
-          <p className={styles.heroIntro}>{block.intro}</p>
-          <div className={styles.heroFactsGrid}>
-            {block.facts.map((fact) => (
-              <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
-            ))}
-          </div>
-        </ScrollReveal>
-      </div>
-    </section>
-  );
-}
-
 function FullBleedImageSection({ block }: { block: FullBleedImageBlock }) {
-  return (
-    <FullBleedPlate plate={block.plate} height={block.height} cursorLabel={block.plate.label} />
-  );
+  return <FullBleedPlate plate={block.plate} height={block.height} cursorLabel={block.plate.label} />;
 }
 
 function OverviewSection({ block }: { block: OverviewBlock }) {
@@ -343,9 +480,9 @@ function CreditsSection({ block }: { block: CreditsBlock }) {
         <ScrollReveal y={16} duration={0.9} className={styles.creditsEyebrowWrap}>
           <Eyebrow number={block.sectionNumber} rule="left" label={block.eyebrowLabel} />
         </ScrollReveal>
-        <ScrollReveal y={18} duration={1} delay={0.08} className={styles.creditsFactsRow}>
-          {block.credits.map((fact) => (
-            <FactItem key={fact.label} label={fact.label} value={fact.value} accent={fact.accent} />
+        <ScrollReveal y={18} duration={1} className={styles.creditsFactsRow}>
+          {block.credits.map((credit) => (
+            <FactItem key={credit.label} label={credit.label} value={credit.value} accent={credit.accent} />
           ))}
         </ScrollReveal>
       </div>
@@ -358,8 +495,6 @@ function CaseStudyBuilder({ blocks }: { blocks: CaseStudyBlock[] }) {
     <>
       {blocks.map((block) => {
         switch (block._type) {
-          case "caseStudyHero":
-            return <CaseStudyHeroSection key={block._key} block={block} />;
           case "fullBleedImage":
             return <FullBleedImageSection key={block._key} block={block} />;
           case "overviewBlock":
@@ -374,9 +509,14 @@ function CaseStudyBuilder({ blocks }: { blocks: CaseStudyBlock[] }) {
             return <TextImageSection key={block._key} block={block} />;
           case "plansBlock":
             return <PlansSection key={block._key} block={block} />;
+          case "materialsBlock":
+            return <MaterialsSection key={block._key} block={block} />;
+          case "furnitureBlock":
+            return <FurnitureSection key={block._key} block={block} />;
           case "creditsBlock":
             return <CreditsSection key={block._key} block={block} />;
           default:
+            // The hero block is consumed by extractHero(); nothing else reaches here.
             return null;
         }
       })}
@@ -384,41 +524,17 @@ function CaseStudyBuilder({ blocks }: { blocks: CaseStudyBlock[] }) {
   );
 }
 
-function PlaceholderCaseStudy({ project }: { project: Project }) {
+function PlaceholderClosing() {
   return (
-    <>
-      <section className={styles.placeholderHero}>
-        <ScrollReveal y={14} duration={0.9} className={styles.placeholderEyebrowWrap}>
-          <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={project.tag} />
-        </ScrollReveal>
-        <ScrollReveal as="h1" y={20} duration={1.1} className={styles.placeholderTitle}>
-          {project.name}
-        </ScrollReveal>
-        <ScrollReveal y={18} duration={1} delay={0.1}>
-          <p className={styles.placeholderIntro}>{project.description}</p>
-          <div className={styles.placeholderFactsGrid}>
-            <FactItem label="Location" value={project.location} />
-            <FactItem label="Area" value={project.area} />
-            <FactItem label="Year" value={project.year} accent />
-          </div>
-        </ScrollReveal>
-      </section>
-
-      <figure data-cursor-label={project.name} className={styles.placeholderFigure}>
-        <Parallax src={project.image} alt={project.name} priority sizes="100vw" />
-        <CaptionChip>{project.caption}</CaptionChip>
-      </figure>
-
-      <section className={styles.placeholderClosing}>
-        <ScrollReveal y={16} duration={0.9} className={styles.placeholderClosingEyebrowWrap}>
-          <Eyebrow rule="both" label="In Development" />
-        </ScrollReveal>
-        <ScrollReveal as="h2" y={20} duration={1} className={styles.placeholderClosingHeading}>
-          The full case study for this project is{" "}
-          <span className={styles.italicGold}>in development.</span>
-        </ScrollReveal>
-      </section>
-    </>
+    <section className={styles.placeholderClosing}>
+      <ScrollReveal y={16} duration={0.9} className={styles.placeholderClosingEyebrowWrap}>
+        <Eyebrow rule="both" label="In Development" />
+      </ScrollReveal>
+      <ScrollReveal as="h2" y={20} duration={1} className={styles.placeholderClosingHeading}>
+        The full case study for this project is{" "}
+        <span className={styles.italicGold}>in development.</span>
+      </ScrollReveal>
+    </section>
   );
 }
 
@@ -445,6 +561,8 @@ export default async function ProjectPage({ params }: PageParams) {
   const index = allProjects.findIndex((p) => p.slug === slug);
   const next = allProjects[(index + 1) % allProjects.length];
 
+  const { hero, rest } = extractHero(project, blocks);
+
   return (
     <div className={styles.root}>
       <FilmGrain blendMode="multiply" zIndex={90} />
@@ -452,12 +570,16 @@ export default async function ProjectPage({ params }: PageParams) {
       <CursorLabel />
       <Header
         variant="project"
+        tone="overlay"
         projectIndex={index + 1}
         projectTotal={settings.projectCounterTotal}
         wordmark={settings.wordmark}
       />
+      <HeaderToneSwitch />
 
-      {blocks.length > 0 ? <CaseStudyBuilder blocks={blocks} /> : <PlaceholderCaseStudy project={project} />}
+      <HeroSection hero={hero} />
+
+      {blocks.length > 0 ? <CaseStudyBuilder blocks={rest} /> : <PlaceholderClosing />}
 
       <nav className={styles.pagerNav}>
         <PagerLink

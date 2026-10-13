@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
+import HeaderToneSwitch from "@/components/HeaderToneSwitch";
 import Footer from "@/components/Footer";
 import Eyebrow from "@/components/Eyebrow";
 import OutlineButton from "@/components/OutlineButton";
@@ -27,44 +29,6 @@ function withItalicPhrase(text: string, italic: string) {
       <span className={styles.italicGold}>{italic}</span>
       {after}
     </>
-  );
-}
-
-function PlanSvg() {
-  return (
-    <svg viewBox="0 0 400 290" className={styles.planSvg}>
-      <rect x="24" y="24" width="352" height="232" fill="none" stroke="#c9a96a" strokeWidth="2.4" strokeOpacity="0.85" />
-      <rect x="31" y="31" width="338" height="218" fill="none" stroke="#c9a96a" strokeWidth="0.7" strokeOpacity="0.4" />
-      <line x1="210" y1="31" x2="210" y2="170" stroke="#c9a96a" strokeWidth="1.6" strokeOpacity="0.7" />
-      <line x1="210" y1="170" x2="369" y2="170" stroke="#c9a96a" strokeWidth="1.6" strokeOpacity="0.7" />
-      <line x1="31" y1="158" x2="140" y2="158" stroke="#c9a96a" strokeWidth="1.6" strokeOpacity="0.7" />
-      <path d="M140 158 A 40 40 0 0 1 140 118" fill="none" stroke="#c9a96a" strokeWidth="0.8" strokeOpacity="0.55" />
-      <line x1="140" y1="158" x2="140" y2="118" stroke="#c9a96a" strokeWidth="1" strokeOpacity="0.55" />
-      <line x1="120" y1="24" x2="160" y2="24" strokeWidth="3" className={styles.panelStroke} />
-      <line x1="120" y1="22" x2="160" y2="22" stroke="#c9a96a" strokeWidth="0.7" strokeOpacity="0.6" />
-      <line x1="120" y1="26" x2="160" y2="26" stroke="#c9a96a" strokeWidth="0.7" strokeOpacity="0.6" />
-      <line x1="270" y1="24" x2="320" y2="24" strokeWidth="3" className={styles.panelStroke} />
-      <line x1="270" y1="22" x2="320" y2="22" stroke="#c9a96a" strokeWidth="0.7" strokeOpacity="0.6" />
-      <line x1="270" y1="26" x2="320" y2="26" stroke="#c9a96a" strokeWidth="0.7" strokeOpacity="0.6" />
-      <rect x="250" y="50" width="96" height="42" fill="none" stroke="#c9a96a" strokeWidth="0.8" strokeOpacity="0.45" />
-      <circle cx="120" cy="210" r="26" fill="none" stroke="#c9a96a" strokeWidth="0.8" strokeOpacity="0.45" />
-      <line x1="24" y1="276" x2="376" y2="276" stroke="#c9a96a" strokeWidth="0.6" strokeOpacity="0.55" />
-      <line x1="24" y1="271" x2="24" y2="281" stroke="#c9a96a" strokeWidth="0.6" strokeOpacity="0.55" />
-      <line x1="376" y1="271" x2="376" y2="281" stroke="#c9a96a" strokeWidth="0.6" strokeOpacity="0.55" />
-      <text x="200" y="273" textAnchor="middle" fill="#c9a96a" fillOpacity="0.8" fontFamily="'Space Grotesk'" fontSize="9" letterSpacing="1">
-        6.40
-      </text>
-    </svg>
-  );
-}
-
-function PlanBadgeSvg() {
-  return (
-    <svg viewBox="0 0 120 80" className={styles.planBadgeSvg}>
-      <rect x="6" y="6" width="108" height="68" fill="none" stroke="#c9a96a" strokeWidth="1.3" strokeOpacity="0.7" />
-      <line x1="64" y1="6" x2="64" y2="48" stroke="#c9a96a" strokeWidth="0.9" strokeOpacity="0.55" />
-      <line x1="64" y1="48" x2="114" y2="48" stroke="#c9a96a" strokeWidth="0.9" strokeOpacity="0.55" />
-    </svg>
   );
 }
 
@@ -96,70 +60,54 @@ export default async function HomePage() {
       <FilmGrain blendMode="overlay" zIndex={41} />
       <CursorLabel />
 
-      <Header variant="home" wordmark={settings.wordmark} />
+      <Header variant="home" tone="overlay" wordmark={settings.wordmark} />
+      <HeaderToneSwitch />
 
       <main className={styles.main}>
-        {/* HERO */}
-        <section id="top" className={styles.hero}>
-          <div className={styles.heroLeft}>
-            <ScrollReveal y={14} duration={0.9} className={styles.heroEyebrowWrap}>
-              <Eyebrow label={home.heroEyebrow} rule="left" ruleWidth={46} letterSpacing="0.4em" />
-            </ScrollReveal>
-            <ScrollReveal as="h1" y={20} duration={1.1} className={styles.heroTitle}>
-              <span className={styles.heroTitleLine}>{home.heroTitleLine1}</span>
-              <span className={styles.heroTitleLineGold}>{home.heroTitleLine2}</span>
-            </ScrollReveal>
-            <ScrollReveal y={0} duration={1} delay={0.4} className={styles.heroMeta}>
-              <span className={styles.nowrap}>{home.heroMetaLeft}</span>
-              <span className={styles.metaDivider}>/</span>
-              <span className={styles.nowrap}>{home.heroMetaRight}</span>
-            </ScrollReveal>
+        {/* HERO — a pinned full-viewport image; one quiet screen of it, then
+            the Philosophy band scrolls over the same image before the page
+            returns to ivory. */}
+        <section id="top" className={styles.hero} data-header-sentinel="">
+          <div className={styles.heroMedia}>
+            <Image
+              src={home.heroImage.src}
+              alt={home.heroImage.alt}
+              fill
+              priority
+              sizes="100vw"
+              className={styles.heroImage}
+              style={{ objectFit: "cover" }}
+            />
+            <div aria-hidden="true" className={styles.heroShade} />
           </div>
 
-          <ScrollReveal y={30} duration={1.1} delay={0.25} className={styles.heroPhotoWrap}>
-            <div className={styles.photoFrame}>
-              <div className={styles.photoInner}>
-                <Parallax
-                  src={home.heroImage.src}
-                  alt={home.heroImage.alt}
-                  priority
-                  sizes="(min-width: 768px) 500px, 100vw"
-                />
-                <div className={styles.insetBorder} style={{ inset: 14 }} />
+          <div className={styles.heroBody}>
+            <div className={styles.heroIntro} />
+
+            {/* PHILOSOPHY — still over the pinned image, which darkens beneath it. */}
+            <div id="philosophy" className={styles.heroPhilosophy}>
+              <ScrollReveal y={16} duration={0.9} className={styles.philosophyEyebrowWrap}>
+                <Eyebrow number="01" label="Philosophy" />
+              </ScrollReveal>
+              <ScrollReveal as="h2" y={20} duration={1} delay={0.05} className={styles.philosophyHeading}>
+                {withItalicPhrase(home.philosophyHeading, home.philosophyHeadingEmphasis)}
+              </ScrollReveal>
+              <div className={styles.philosophyGrid}>
+                <ScrollReveal as="p" y={16} duration={0.9} delay={0.1} className={styles.philosophyParagraph}>
+                  {home.philosophyParagraph1}
+                </ScrollReveal>
+                <ScrollReveal as="p" y={16} duration={0.9} delay={0.18} className={styles.philosophyParagraph}>
+                  {home.philosophyParagraph2}
+                </ScrollReveal>
               </div>
             </div>
-            <div className={styles.planCard}>
-              <div className={styles.planCardHeader}>
-                <span className={styles.planCardLabel}>Fig. 01 — Plan</span>
-                <span className={styles.planCardScale}>1:50</span>
-              </div>
-              <PlanSvg />
-            </div>
-          </ScrollReveal>
+          </div>
         </section>
 
-        {/* WALL DIVIDER */}
+        {/* WALL DIVIDER — the seam back onto the ivory page. */}
         <div className={styles.wallDivider}>
           <div className={styles.wallDividerLabel}>{home.wallDividerText}</div>
         </div>
-
-        {/* PHILOSOPHY */}
-        <section id="philosophy" className={styles.philosophy}>
-          <ScrollReveal y={16} duration={0.9} className={styles.philosophyEyebrowWrap}>
-            <Eyebrow number="01" label="Philosophy" />
-          </ScrollReveal>
-          <ScrollReveal as="h2" y={20} duration={1} delay={0.05} className={styles.philosophyHeading}>
-            {withItalicPhrase(home.philosophyHeading, home.philosophyHeadingEmphasis)}
-          </ScrollReveal>
-          <div className={styles.philosophyGrid}>
-            <ScrollReveal as="p" y={16} duration={0.9} delay={0.1} className={styles.philosophyParagraph}>
-              {home.philosophyParagraph1}
-            </ScrollReveal>
-            <ScrollReveal as="p" y={16} duration={0.9} delay={0.18} className={styles.philosophyParagraph}>
-              {home.philosophyParagraph2}
-            </ScrollReveal>
-          </div>
-        </section>
 
         {/* SELECTED WORK */}
         <section id="work" className={styles.work}>
@@ -187,7 +135,6 @@ export default async function HomePage() {
                       <div className={styles.insetBorder} style={{ inset: 13 }} />
                     </div>
                   </div>
-                  <PlanBadgeSvg />
                   <div className={styles.workCardTitleRow}>
                     <h3 className={styles.workCardTitle}>{project.name}</h3>
                     <span className={styles.workCardYear}>{project.year}</span>

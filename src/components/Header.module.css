@@ -19,6 +19,34 @@
   backdrop-filter: blur(2px);
 }
 
+/* Over a full-bleed hero: every colour token the header reads is remapped
+   to ivory/white on a soft dark scrim. HeaderToneSwitch flips
+   <html data-header-tone="page"> once the hero has scrolled out, and the
+   tokens re-inherit their global values — the same look as .translucent. */
+.overlay {
+  --ink: #ffffff;
+  --g: #e0c88f;
+  --dim: rgba(255, 255, 255, 0.8);
+  --meta: rgba(255, 255, 255, 0.8);
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(20, 15, 9, 0.46) 0%, transparent 100%);
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+:global(html[data-header-tone="page"]) .overlay {
+  --ink: inherit;
+  --g: inherit;
+  --dim: inherit;
+  --meta: inherit;
+  color: inherit;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg) 90%, transparent) 0%,
+    transparent 100%
+  );
+  backdrop-filter: blur(2px);
+}
+
 .wordmarkLink {
   text-decoration: none;
   cursor: pointer;

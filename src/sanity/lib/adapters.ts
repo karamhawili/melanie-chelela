@@ -3,7 +3,9 @@ import { resolveImageUrl } from "./image";
 import type {
   CaseStudyBlock,
   Fact,
+  FurniturePiece,
   HomePageContent,
+  MaterialItem,
   Plan,
   Plate,
   Project,
@@ -47,6 +49,22 @@ interface RawFact {
   accent?: boolean;
 }
 
+interface RawMaterialItem {
+  code?: string;
+  name?: string;
+  finish?: string;
+  tone?: string;
+  image?: RawImage;
+}
+
+interface RawFurniturePiece {
+  index?: string;
+  name?: string;
+  designer?: string;
+  maker?: string;
+  image?: RawImage;
+}
+
 interface RawServiceItem {
   letter?: string;
   title?: string;
@@ -71,11 +89,6 @@ export interface RawProject {
 }
 
 export interface RawHomePage {
-  heroEyebrow?: string;
-  heroTitleLine1?: string;
-  heroTitleLine2?: string;
-  heroMetaLeft?: string;
-  heroMetaRight?: string;
   heroImage?: RawImage;
   wallDividerText?: string;
   philosophyHeading?: string;
@@ -153,6 +166,29 @@ export function toFact(raw: RawFact | undefined): Fact {
 
 function toFacts(raw: RawFact[] | undefined): Fact[] {
   return (raw ?? []).map(toFact);
+}
+
+function toMaterialItem(raw: RawMaterialItem): MaterialItem {
+  const name = raw.name ?? "";
+  const src = toImageUrl(raw.image);
+  return {
+    code: raw.code ?? "",
+    name,
+    finish: raw.finish ?? "",
+    tone: raw.tone || undefined,
+    image: src ? { src, alt: raw.image?.alt ?? name, fig: "", label: name } : undefined,
+  };
+}
+
+function toFurniturePiece(raw: RawFurniturePiece): FurniturePiece {
+  const name = raw.name ?? "";
+  return {
+    index: raw.index ?? "",
+    name,
+    designer: raw.designer ?? "",
+    maker: raw.maker ?? "",
+    image: { src: toImageUrl(raw.image), alt: raw.image?.alt ?? name, fig: "", label: name },
+  };
 }
 
 function toServiceItem(raw: RawServiceItem): ServiceItem {
@@ -272,6 +308,23 @@ function toCaseStudyBlock(block: Record<string, unknown>): CaseStudyBlock | null
           .filter((plan) => plan.src !== ""),
         aspectRatio: block.aspectRatio ? String(block.aspectRatio) : undefined,
       };
+    case "materialsBlock":
+      return {
+        _key: key,
+        _type: "materialsBlock",
+        items: ((block.items as RawMaterialItem[] | undefined) ?? [])
+          .map(toMaterialItem)
+          // A still-empty draft swatch has nothing to draw.
+          .filter((item) => item.tone || item.image),
+      };
+    case "furnitureBlock":
+      return {
+        _key: key,
+        _type: "furnitureBlock",
+        pieces: ((block.pieces as RawFurniturePiece[] | undefined) ?? [])
+          .map(toFurniturePiece)
+          .filter((piece) => piece.image.src !== ""),
+      };
     case "creditsBlock":
       return {
         _key: key,
@@ -289,11 +342,6 @@ function toCaseStudyBlock(block: Record<string, unknown>): CaseStudyBlock | null
 
 export function toHomePage(raw: RawHomePage): HomePageContent {
   return {
-    heroEyebrow: raw.heroEyebrow ?? "",
-    heroTitleLine1: raw.heroTitleLine1 ?? "",
-    heroTitleLine2: raw.heroTitleLine2 ?? "",
-    heroMetaLeft: raw.heroMetaLeft ?? "",
-    heroMetaRight: raw.heroMetaRight ?? "",
     heroImage: { src: toImageUrl(raw.heroImage), alt: raw.heroImage?.alt ?? "", fig: "", label: "" },
     wallDividerText: raw.wallDividerText ?? "",
     philosophyHeading: raw.philosophyHeading ?? "",
