@@ -14,6 +14,8 @@ import { quotePortraitBlockType } from "./blocks/quotePortraitBlock";
 import { textImageBlockType } from "./blocks/textImageBlock";
 import { creditsBlockType } from "./blocks/creditsBlock";
 import { plansBlockType } from "./blocks/plansBlock";
+import { materialsBlockType, materialItemType } from "./blocks/materialsBlock";
+import { furnitureBlockType, furniturePieceType } from "./blocks/furnitureBlock";
 
 import { projectType } from "./documents/project";
 import { homePageType } from "./documents/homePage";
@@ -34,6 +36,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     pdfPlateType,
     factType,
     serviceItemType,
+    materialItemType,
+    furniturePieceType,
     // blocks
     caseStudyHeroType,
     fullBleedImageType,
@@ -44,5 +48,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     textImageBlockType,
     creditsBlockType,
     plansBlockType,
+    materialsBlockType,
+    furnitureBlockType,
   ],
 };

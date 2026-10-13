@@ -1,6 +1,8 @@
 .root {
   position: relative;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: hidden would make this the scroll container and
+     un-stick the hero media. */
+  overflow-x: clip;
   min-height: 100vh;
   background: radial-gradient(130% 90% at 50% -8%, rgba(201, 169, 106, 0.22), transparent 60%),
     var(--bg);
@@ -20,7 +22,6 @@
 }
 
 .main {
-  padding-top: 78px;
   position: relative;
   z-index: 1;
 }
@@ -39,129 +40,114 @@
   color: var(--g);
 }
 
-.panelStroke {
-  stroke: var(--panel);
-}
-
-/* HERO */
+/* HERO
+   .heroMedia is sticky for the hero's whole height; .heroBody is pulled up
+   over it by one viewport, so the first screen is the image alone and the
+   philosophy band then scrolls across the same image. */
 .hero {
-  scroll-margin-top: 80px;
   position: relative;
-  min-height: min(calc(100vh - 78px), 900px);
-  box-sizing: border-box;
-  padding: clamp(48px, 8vh, 96px) clamp(40px, 7vw, 120px) clamp(48px, 7vh, 84px);
-  display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.18fr);
-  align-items: start;
-  gap: clamp(40px, 6vw, 104px);
+  --ivory: #f1ebdf;
+  /* Every shared component inside reads these tokens — remapped for ivory on dark. */
+  --ink: var(--ivory);
+  --body: rgba(241, 235, 223, 0.8);
+  --dim: rgba(241, 235, 223, 0.74);
+  --meta: rgba(241, 235, 223, 0.62);
+  --line: rgba(241, 235, 223, 0.22);
+  color: var(--ivory);
 }
 
-.heroLeft {
+.heroMedia {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100vh;
+  height: 100lvh;
+  overflow: hidden;
+  background: var(--image-bg);
+}
+
+.heroImage {
+  transform: scale(1.08);
+  transform-origin: 50% 40%;
+  animation: heroSettle 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) var(--intro-delay, 0s) both;
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(20, 15, 9, 0.56) 0%, rgba(20, 15, 9, 0.06) 28%, rgba(20, 15, 9, 0.08) 56%, rgba(20, 15, 9, 0.5) 100%);
+}
+
+.heroBody {
   position: relative;
+  z-index: 1;
+  margin-top: -100vh;
+  margin-top: -100lvh;
 }
 
-.heroEyebrowWrap {
-  margin-bottom: 32px;
+.heroIntro {
+  min-height: 100vh;
+  min-height: 100svh;
 }
 
-.heroTitle {
+/* PHILOSOPHY — the image darkens beneath the text as it arrives. */
+.heroPhilosophy {
+  scroll-margin-top: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(90px, 16vh, 180px) clamp(24px, 6vw, 90px) clamp(90px, 14vh, 160px);
+  /* Starts at nothing so the band has no visible edge, then deepens over
+     its upper half to carry the text. */
+  background: linear-gradient(
+    180deg,
+    rgba(20, 15, 9, 0) 0%,
+    rgba(20, 15, 9, 0.28) 22%,
+    rgba(20, 15, 9, 0.6) 44%,
+    rgba(20, 15, 9, 0.78) 68%,
+    rgba(20, 15, 9, 0.82) 100%
+  );
+}
+
+.philosophyEyebrowWrap {
+  margin-bottom: 30px;
+}
+
+.philosophyHeading {
+  max-width: 1000px;
   margin: 0;
   font-family: var(--font-italiana), serif;
-  font-weight: 500;
-  line-height: 0.82;
-  letter-spacing: -0.02em;
-  font-size: clamp(56px, 8.8vw, 164px);
-  color: var(--ink);
+  font-weight: 400;
+  font-size: clamp(26px, 3.6vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ivory);
 }
 
-.heroTitleLine {
-  display: block;
+.philosophyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 760px;
+  margin: 46px auto 0;
+  text-align: left;
 }
 
-.heroTitleLineGold {
-  display: block;
-  color: var(--g);
+.philosophyParagraph {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--body);
 }
 
-.heroMeta {
-  margin-top: 36px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  color: var(--meta);
-  text-transform: uppercase;
-}
-
-.heroPhotoWrap {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  justify-self: end;
-}
-
-.photoFrame {
-  position: relative;
-  border: 1px solid rgba(201, 169, 106, 0.3);
-  padding: 13px;
-  background: transparent;
-}
-
-.photoInner {
-  position: relative;
-  aspect-ratio: 4 / 4.3;
-  overflow: hidden;
-  background: var(--ph);
-}
-
-.insetBorder {
-  position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  pointer-events: none;
-}
-
-.planCard {
-  position: absolute;
-  left: -50px;
-  bottom: -42px;
-  width: 224px;
-  border: 1px solid rgba(201, 169, 106, 0.3);
-  padding: 16px;
-  background: var(--panel);
-  z-index: 3;
-}
-
-.planCardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 13px;
-}
-
-.planCardLabel {
-  font-size: 9.5px;
-  letter-spacing: 0.26em;
-  color: var(--meta);
-  text-transform: uppercase;
-}
-
-.planCardScale {
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  color: var(--g);
-  font-variant-numeric: tabular-nums;
-}
-
-.planSvg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* WALL DIVIDER */
+/* WALL DIVIDER — flush against the hero, the seam back onto ivory. */
 .wallDivider {
-  margin: 40px 0;
+  margin: 0 0 40px;
   height: 34px;
   position: relative;
   border-top: 1px solid rgba(201, 169, 106, 0.5);
@@ -180,44 +166,6 @@
   color: var(--meta);
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-/* PHILOSOPHY */
-.philosophy {
-  scroll-margin-top: 80px;
-  padding: 50px 6vw 80px;
-  text-align: center;
-}
-
-.philosophyEyebrowWrap {
-  margin-bottom: 30px;
-}
-
-.philosophyHeading {
-  max-width: 1000px;
-  margin: 0 auto;
-  font-family: var(--font-italiana), serif;
-  font-weight: 400;
-  font-size: clamp(24px, 3.2vw, 42px);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.philosophyGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  max-width: 760px;
-  margin: 46px auto 0;
-  text-align: left;
-}
-
-.philosophyParagraph {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.95;
-  color: var(--body);
 }
 
 /* SELECTED WORK */
@@ -270,15 +218,10 @@
   transform: scale(1.01);
 }
 
-.planBadgeSvg {
+.insetBorder {
   position: absolute;
-  top: -16px;
-  right: -16px;
-  width: 92px;
-  height: auto;
-  background: var(--bg);
-  padding: 7px;
-  border: 1px solid rgba(201, 169, 106, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
 }
 
 .workCardTitleRow {
@@ -422,17 +365,14 @@
   margin-top: 32px;
 }
 
+@keyframes heroSettle {
+  to {
+    transform: scale(1);
+  }
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .heroPhotoWrap {
-    justify-self: center;
-  }
-
   .philosophyGrid {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -444,36 +384,13 @@
 }
 
 @media (max-width: 480px) {
-  .main {
-    padding-top: 58px;
-  }
-
-  .hero {
-    padding: clamp(42px, 6vh, 74px) 24px clamp(48px, 7vh, 84px);
-  }
-
-  .planCard {
-    left: 18px;
-    bottom: 18px;
-    width: 120px;
-    padding: 9px;
-  }
-
-  .planCardHeader {
-    margin-bottom: 8px;
-  }
-
-  .planCardLabel {
-    font-size: 7.5px;
-    letter-spacing: 0.18em;
-  }
-
-  .planCardScale {
-    font-size: 7.5px;
+  .heroPhilosophy {
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .wallDivider {
-    margin: 28px 0;
+    margin-bottom: 28px;
   }
 
   .wallDividerLabel {
@@ -482,7 +399,6 @@
     max-width: 70vw;
   }
 
-  .philosophy,
   .work,
   .approach {
     padding-left: 24px;
@@ -518,5 +434,12 @@
   .inquire {
     padding-left: 24px;
     padding-right: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroImage {
+    animation: none;
+    transform: none;
   }
 }

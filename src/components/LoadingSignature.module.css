@@ -1,0 +1,142 @@
+/* Timeline (all CSS, starts at first paint):
+   0 ─────────── wipe ──────────── ┐ hold ┐
+                                   fade stage + retract bar (0.5s)
+                                   lift curtain (1s) → animationend → unmount
+   The four `--loader-*` tokens default here and are overridable by an
+   ancestor (app/redesign/layout.module.css shares them with the page). */
+
+.curtain {
+  --wipe: var(--loader-wipe, 2.4s);
+  --hold: var(--loader-hold, 0.25s);
+  --fade: var(--loader-fade, 0.5s);
+  --lift: var(--loader-lift, 1s);
+  --ease: cubic-bezier(0.65, 0.01, 0.05, 0.99);
+  --curtain: #2b1a0f;
+  --ivory: #f1ebdf;
+
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  background: var(--curtain);
+  color: var(--ivory);
+  animation: lift var(--lift) var(--ease) calc(var(--wipe) + var(--hold)) forwards;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  animation: fadeOut var(--fade) ease calc(var(--wipe) + var(--hold)) forwards;
+}
+
+.signature {
+  position: relative;
+  font-family: var(--font-signature), "Snell Roundhand", "Brush Script MT", cursive;
+  font-size: clamp(29px, 4.75vw, 68px);
+  line-height: 1;
+  white-space: nowrap;
+  /* Room for the script face's swashes so the wipe never clips them. */
+  padding: 0.22em 0.34em;
+}
+
+.ghost {
+  display: block;
+  opacity: 0.2;
+}
+
+.ink {
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  clip-path: inset(0 100% 0 0);
+  animation: wipe var(--wipe) var(--ease) forwards;
+}
+
+.caption {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(241, 235, 223, 0.55);
+  opacity: 0;
+  animation: captionIn 1.2s ease 0.6s forwards;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--g, #c9a96a);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation:
+    grow var(--wipe) var(--ease) forwards,
+    retract var(--fade) var(--ease) calc(var(--wipe) + var(--hold)) forwards;
+}
+
+@keyframes wipe {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes retract {
+  from {
+    transform: scaleX(1);
+    transform-origin: right center;
+  }
+  to {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes captionIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lift {
+  to {
+    transform: translate3d(0, -101%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain {
+    --wipe: 0.6s;
+    --hold: 0.1s;
+    --fade: 0.3s;
+    --lift: 0.4s;
+  }
+
+  .ink {
+    animation: none;
+    clip-path: none;
+  }
+
+  .bar {
+    display: none;
+  }
+}

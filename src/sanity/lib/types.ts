@@ -38,11 +38,6 @@ export interface ServiceItem {
 }
 
 export interface HomePageContent {
-  heroEyebrow: string;
-  heroTitleLine1: string;
-  heroTitleLine2: string;
-  heroMetaLeft: string;
-  heroMetaRight: string;
   heroImage: Plate;
   wallDividerText: string;
   philosophyHeading: string;
@@ -165,6 +160,37 @@ export interface PlansBlock {
   aspectRatio?: string;
 }
 
+/** One swatch in a Materials collage: a photo, or a flat CSS colour/gradient. */
+export interface MaterialItem {
+  code: string;
+  name: string;
+  finish: string;
+  tone?: string;
+  image?: Plate;
+}
+
+export interface MaterialsBlock {
+  _key: string;
+  _type: "materialsBlock";
+  /** 1–6 swatches; the collage has a slot for each. */
+  items: MaterialItem[];
+}
+
+export interface FurniturePiece {
+  index: string;
+  name: string;
+  designer: string;
+  maker: string;
+  image: Plate;
+}
+
+export interface FurnitureBlock {
+  _key: string;
+  _type: "furnitureBlock";
+  /** 1–6 pieces; the collage has a slot for each. */
+  pieces: FurniturePiece[];
+}
+
 export interface CreditsBlock {
   _key: string;
   _type: "creditsBlock";
@@ -182,4 +208,6 @@ export type CaseStudyBlock =
   | QuotePortraitBlock
   | TextImageBlock
   | PlansBlock
+  | MaterialsBlock
+  | FurnitureBlock
   | CreditsBlock;

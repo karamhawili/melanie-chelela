@@ -1,0 +1,11 @@
+/* One source of truth for the curtain's timing. LoadingSignature reads the
+   `--loader-*` tokens; pages read `--intro-delay` so a hero's entrance
+   starts as the curtain lifts. Once the curtain is gone, the component sets
+   `--intro-done: 0s` on <html>, so later client navigations don't wait. */
+.shell {
+  --loader-wipe: 2.4s;
+  --loader-hold: 0.25s;
+  --loader-fade: 0.5s;
+  --loader-lift: 1s;
+  --intro-delay: var(--intro-done, calc(var(--loader-wipe) + var(--loader-hold) + 0.2s));
+}
