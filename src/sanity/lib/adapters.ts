@@ -12,6 +12,7 @@ import type {
   ServiceItem,
   SiteSettings,
   TitleLine,
+  TitleLineSize,
   TitleLineStyle,
   WorksPageContent,
 } from "./types";
@@ -70,6 +71,7 @@ interface RawFurniturePiece {
 interface RawTitleLine {
   text?: string;
   style?: string;
+  size?: string;
 }
 
 interface RawServiceItem {
@@ -200,13 +202,23 @@ function toFurniturePiece(raw: RawFurniturePiece): FurniturePiece {
 
 const TITLE_LINE_STYLES: ReadonlySet<string> = new Set<TitleLineStyle>(["regular", "italic", "gold", "goldItalic"]);
 
+const TITLE_LINE_SIZES: ReadonlySet<string> = new Set<TitleLineSize>(["small", "regular", "large"]);
+
 function toTitleLineStyle(raw: string | undefined): TitleLineStyle {
   return raw && TITLE_LINE_STYLES.has(raw) ? (raw as TitleLineStyle) : "regular";
 }
 
+function toTitleLineSize(raw: string | undefined): TitleLineSize {
+  return raw && TITLE_LINE_SIZES.has(raw) ? (raw as TitleLineSize) : "regular";
+}
+
 export function toTitleLines(raw: RawTitleLine[] | undefined): TitleLine[] {
   return (raw ?? [])
-    .map((line) => ({ text: (line.text ?? "").trim(), style: toTitleLineStyle(line.style) }))
+    .map((line) => ({
+      text: (line.text ?? "").trim(),
+      style: toTitleLineStyle(line.style),
+      size: toTitleLineSize(line.size),
+    }))
     .filter((line) => line.text !== "");
 }
 
@@ -230,7 +242,7 @@ export function toProject(raw: RawProject): Project {
     slug: raw.slug ?? "",
     n: String(order).padStart(2, "0"),
     name,
-    titleLines: displayTitle.length > 0 ? displayTitle : [{ text: name, style: "regular" }],
+    titleLines: displayTitle.length > 0 ? displayTitle : [{ text: name, style: "regular", size: "regular" }],
     hasDisplayTitle: displayTitle.length > 0,
     tag: raw.tag ?? "",
     location: raw.location ?? "",

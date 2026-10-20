@@ -14,3 +14,12 @@
   font-style: italic;
   color: var(--g);
 }
+
+/* Relative to the heading's size, so each surface's own scale carries through. */
+.small {
+  font-size: 0.64em;
+}
+
+.large {
+  font-size: 1.3em;
+}

@@ -4,11 +4,13 @@
 // results into them.
 
 export type TitleLineStyle = "regular" | "italic" | "gold" | "goldItalic";
+export type TitleLineSize = "small" | "regular" | "large";
 
-/** One line of a display title; the surface that sets it owns the size. */
+/** One line of a display title; `size` scales from the base size the surface sets. */
 export interface TitleLine {
   text: string;
   style: TitleLineStyle;
+  size: TitleLineSize;
 }
 
 export interface Project {

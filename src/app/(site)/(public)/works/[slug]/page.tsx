@@ -129,8 +129,8 @@ function extractHero(project: Project, blocks: CaseStudyBlock[]): { hero: HeroCo
   const rest = blocks.filter((b, i) => i !== heroIndex && (openingPlate === null || i !== heroIndex + 1));
 
   const legacyTitle: TitleLine[] = [];
-  if (heroBlock.titleLine1) legacyTitle.push({ text: heroBlock.titleLine1, style: "regular" });
-  if (heroBlock.titleLine2) legacyTitle.push({ text: heroBlock.titleLine2, style: "gold" });
+  if (heroBlock.titleLine1) legacyTitle.push({ text: heroBlock.titleLine1, style: "regular", size: "regular" });
+  if (heroBlock.titleLine2) legacyTitle.push({ text: heroBlock.titleLine2, style: "gold", size: "regular" });
 
   return {
     hero: {
