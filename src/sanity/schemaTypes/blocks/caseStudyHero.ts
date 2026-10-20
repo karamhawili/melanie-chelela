@@ -11,17 +11,22 @@ export const caseStudyHeroType = defineType({
       type: "string",
       validation: (rule) => rule.required(),
     }),
+    // The hero sets the project's Display title. These two fields are the
+    // pre-Display-title way of breaking the name and stay as a fallback for
+    // projects that haven't filled it in yet.
     defineField({
       name: "titleLine1",
       title: "Title — line 1",
       type: "string",
-      validation: (rule) => rule.required(),
+      deprecated: { reason: "Set the name on the project's Display title field instead." },
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "titleLine2",
       title: "Title — line 2 (gold)",
       type: "string",
-      validation: (rule) => rule.required(),
+      deprecated: { reason: "Set the name on the project's Display title field instead." },
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "intro",
@@ -39,9 +44,9 @@ export const caseStudyHeroType = defineType({
     }),
   ],
   preview: {
-    select: { line1: "titleLine1", line2: "titleLine2" },
-    prepare({ line1, line2 }) {
-      return { title: `${line1 ?? ""} ${line2 ?? ""}`.trim() || "Case Study Hero", subtitle: "Case Study Hero" };
+    select: { eyebrow: "eyebrow" },
+    prepare({ eyebrow }) {
+      return { title: "Case Study Hero", subtitle: eyebrow || undefined };
     },
   },
 });

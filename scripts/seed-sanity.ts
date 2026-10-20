@@ -352,7 +352,6 @@ async function seedSingletons(imageField: ReturnType<typeof makeImageField>) {
     heroMetaLeft: "Est. Beirut",
     heroMetaRight: "Since 2009",
     heroImage: imageField("cam07.jpg", "Interior — Salon"),
-    wallDividerText: "Interiors, Drawn to the Millimetre",
     philosophyHeading: "Luxury is what remains when nothing is excessive.",
     philosophyHeadingEmphasis: "when nothing",
     philosophyParagraph1:

@@ -3,10 +3,23 @@
 // (adapters.ts) is the only place that translates raw Sanity query
 // results into them.
 
+export type TitleLineStyle = "regular" | "italic" | "gold" | "goldItalic";
+
+/** One line of a display title; the surface that sets it owns the size. */
+export interface TitleLine {
+  text: string;
+  style: TitleLineStyle;
+}
+
 export interface Project {
   slug: string;
   n: string;
+  /** Plain name — for alt text, metadata and anywhere type isn't display-sized. */
   name: string;
+  /** The name as set in display type: one entry per line. Never empty. */
+  titleLines: TitleLine[];
+  /** False when `titleLines` is only the plain name on one line, for want of a Display title. */
+  hasDisplayTitle: boolean;
   tag: string;
   location: string;
   area: string;
@@ -39,7 +52,6 @@ export interface ServiceItem {
 
 export interface HomePageContent {
   heroImage: Plate;
-  wallDividerText: string;
   philosophyHeading: string;
   philosophyHeadingEmphasis: string;
   philosophyParagraph1: string;
@@ -75,8 +87,9 @@ export interface CaseStudyHeroBlock {
   _key: string;
   _type: "caseStudyHero";
   eyebrow: string;
-  titleLine1: string;
-  titleLine2: string;
+  /** Legacy two-line title, kept for projects without a Display title. */
+  titleLine1?: string;
+  titleLine2?: string;
   intro: string;
   facts: Fact[];
 }

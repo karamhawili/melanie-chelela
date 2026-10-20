@@ -9,6 +9,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import FilmGrain from "@/components/FilmGrain";
 import Parallax from "@/components/Parallax";
 import CursorLabel from "@/components/CursorLabel";
+import ProjectName from "@/components/ProjectName";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECTS_QUERY, HOME_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import {
@@ -48,14 +49,6 @@ export default async function HomePage() {
 
   return (
     <div className={styles.root}>
-      <svg width="0" height="0" className={styles.hiddenSvg} aria-hidden="true">
-        <defs>
-          <pattern id="mcHatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="0" x2="0" y2="7" stroke="#c9a96a" strokeWidth="0.6" strokeOpacity="0.35" />
-          </pattern>
-        </defs>
-      </svg>
-
       <div aria-hidden="true" className={styles.vignette} />
       <FilmGrain blendMode="overlay" zIndex={41} />
       <CursorLabel />
@@ -104,11 +97,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* WALL DIVIDER — the seam back onto the ivory page. */}
-        <div className={styles.wallDivider}>
-          <div className={styles.wallDividerLabel}>{home.wallDividerText}</div>
-        </div>
-
         {/* SELECTED WORK */}
         <section id="work" className={styles.work}>
           <ScrollReveal y={16} duration={0.9} className={styles.workEyebrowWrap}>
@@ -136,7 +124,9 @@ export default async function HomePage() {
                     </div>
                   </div>
                   <div className={styles.workCardTitleRow}>
-                    <h3 className={styles.workCardTitle}>{project.name}</h3>
+                    <h3 className={styles.workCardTitle}>
+                      <ProjectName lines={project.titleLines} />
+                    </h3>
                     <span className={styles.workCardYear}>{project.year}</span>
                   </div>
                   <div className={styles.workCardMeta}>

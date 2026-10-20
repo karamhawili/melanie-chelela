@@ -5,6 +5,7 @@ import { defineQuery } from "next-sanity";
 // as-is, which is exactly what resolveImageUrl()/urlFor() need.
 const PROJECT_CARD_FIELDS = /* groq */ `
   title,
+  displayTitle[]{ text, style },
   "slug": slug.current,
   tag,
   location,

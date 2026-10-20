@@ -100,17 +100,7 @@
   line-height: 0.9;
   letter-spacing: -0.01em;
   font-size: clamp(44px, 7.2vw, 118px);
-}
-
-.heroTitleLine {
-  display: block;
   color: var(--ivory);
-}
-
-.heroTitleLineGold {
-  display: block;
-  color: var(--g);
-  margin-left: 0.03em;
 }
 
 .heroIntro {
@@ -290,10 +280,12 @@
   align-items: stretch;
 }
 
-/* MATERIALS & FURNITURE — wordless collages, one viewport each. Up to six
-   items sit on a centred canvas at hand-set positions (--x/--y/--w in % of
-   the canvas, --r the item's aspect ratio): three columns on a shared
-   gutter, each column's baseline offset a little from its neighbours. */
+/* MATERIALS & FURNITURE — collages, one viewport each. Up to six items sit
+   on a centred canvas at hand-set positions (--x/--y/--w in % of the canvas,
+   --r the image's aspect ratio): three columns on a shared gutter, each
+   column's baseline offset a little from its neighbours. Only the image
+   takes the ratio; a material's caption flows beneath it, so the rows are
+   spaced to leave it room. */
 .collageSection {
   min-height: 100vh;
   min-height: 100dvh;
@@ -304,7 +296,7 @@
 
 .collage {
   position: relative;
-  width: min(100%, 1240px, calc((100dvh - 150px) * 1.5));
+  width: min(100%, 1240px, calc((100dvh - 190px) * 1.5));
   aspect-ratio: 3 / 2;
 }
 
@@ -313,15 +305,14 @@
   left: var(--x);
   top: var(--y);
   width: var(--w);
-  aspect-ratio: var(--r);
 }
 
-.materialsCollage > :nth-child(1) { --x: 4%;  --y: 4%;  --w: 26%; --r: 1; }
-.materialsCollage > :nth-child(2) { --x: 37%; --y: 0%;  --w: 26%; --r: 4 / 5; }
-.materialsCollage > :nth-child(3) { --x: 70%; --y: 8%;  --w: 26%; --r: 5 / 4; }
+.materialsCollage > :nth-child(1) { --x: 4%;  --y: 2%;  --w: 26%; --r: 1; }
+.materialsCollage > :nth-child(2) { --x: 37%; --y: 0%;  --w: 26%; --r: 9 / 10; }
+.materialsCollage > :nth-child(3) { --x: 70%; --y: 6%;  --w: 26%; --r: 5 / 4; }
 .materialsCollage > :nth-child(4) { --x: 4%;  --y: 54%; --w: 26%; --r: 1; }
-.materialsCollage > :nth-child(5) { --x: 37%; --y: 58%; --w: 26%; --r: 5 / 4; }
-.materialsCollage > :nth-child(6) { --x: 70%; --y: 48%; --w: 26%; --r: 1; }
+.materialsCollage > :nth-child(5) { --x: 37%; --y: 57%; --w: 26%; --r: 5 / 4; }
+.materialsCollage > :nth-child(6) { --x: 70%; --y: 50%; --w: 26%; --r: 1; }
 
 .furnitureCollage > :nth-child(1) { --x: 4%;  --y: 2%;  --w: 26%; --r: 4 / 5; }
 .furnitureCollage > :nth-child(2) { --x: 37%; --y: 8%;  --w: 26%; --r: 1; }
@@ -330,13 +321,56 @@
 .furnitureCollage > :nth-child(5) { --x: 37%; --y: 54%; --w: 26%; --r: 1; }
 .furnitureCollage > :nth-child(6) { --x: 70%; --y: 60%; --w: 26%; --r: 5 / 4; }
 
+.materialFigure {
+  margin: 0;
+}
+
 .swatchFrame {
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: var(--r);
   border: 1px solid rgba(201, 169, 106, 0.28);
   padding: clamp(6px, 0.8vw, 10px);
   transition: border-color 0.4s ease;
+}
+
+/* The label sits outside the frame, in the spec-sheet voice: code in gold,
+   name in ink, finish and use beneath in the meta tone. */
+.swatchCaption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: clamp(8px, 1.2vh, 12px);
+}
+
+.swatchTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swatchCode {
+  flex: 0 0 auto;
+  font-size: 8.5px;
+  letter-spacing: 0.24em;
+  color: var(--g);
+  text-transform: uppercase;
+}
+
+.swatchName {
+  font-size: clamp(11px, 1vw, 13px);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.swatchFinish {
+  font-size: 8.5px;
+  line-height: 1.5;
+  letter-spacing: 0.2em;
+  color: var(--meta);
+  text-transform: uppercase;
 }
 
 .material:hover .swatchFrame {
@@ -366,7 +400,7 @@
   margin: 0;
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: var(--r);
   overflow: hidden;
   background: var(--image-bg);
   transition: transform 0.6s ease;
@@ -505,22 +539,27 @@
     grid-template-columns: 1fr;
   }
 
-  /* Portrait canvas with one shared arrangement for both collages. */
+  /* Portrait canvas with one shared arrangement for both collages; the
+     rows sit far enough apart for a material's two-line caption. */
   .collageSection {
     padding: 80px 24px 48px;
   }
 
   .collage {
-    width: min(100%, calc((100dvh - 128px) * 2 / 3));
-    aspect-ratio: 2 / 3;
+    width: min(100%, calc((100dvh - 128px) * 4 / 7));
+    aspect-ratio: 4 / 7;
   }
 
   .collage > :nth-child(1) { --x: 4%;  --y: 0%;  --w: 42%; --r: 1; }
-  .collage > :nth-child(2) { --x: 54%; --y: 6%;  --w: 42%; --r: 4 / 5; }
-  .collage > :nth-child(3) { --x: 4%;  --y: 34%; --w: 42%; --r: 5 / 4; }
-  .collage > :nth-child(4) { --x: 54%; --y: 47%; --w: 42%; --r: 1; }
-  .collage > :nth-child(5) { --x: 4%;  --y: 62%; --w: 42%; --r: 4 / 5; }
-  .collage > :nth-child(6) { --x: 54%; --y: 76%; --w: 42%; --r: 5 / 4; }
+  .collage > :nth-child(2) { --x: 54%; --y: 3%;  --w: 42%; --r: 4 / 5; }
+  .collage > :nth-child(3) { --x: 4%;  --y: 32%; --w: 42%; --r: 5 / 4; }
+  .collage > :nth-child(4) { --x: 54%; --y: 41%; --w: 42%; --r: 1; }
+  .collage > :nth-child(5) { --x: 4%;  --y: 59%; --w: 42%; --r: 4 / 5; }
+  .collage > :nth-child(6) { --x: 54%; --y: 73%; --w: 42%; --r: 5 / 4; }
+
+  .swatchName {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 480px) {

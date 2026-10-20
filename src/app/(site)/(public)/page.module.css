@@ -9,10 +9,6 @@
   background-attachment: fixed;
 }
 
-.hiddenSvg {
-  position: absolute;
-}
-
 .vignette {
   position: fixed;
   inset: 0;
@@ -145,33 +141,10 @@
   color: var(--body);
 }
 
-/* WALL DIVIDER — flush against the hero, the seam back onto ivory. */
-.wallDivider {
-  margin: 0 0 40px;
-  height: 34px;
-  position: relative;
-  border-top: 1px solid rgba(201, 169, 106, 0.5);
-  border-bottom: 1px solid rgba(201, 169, 106, 0.5);
-  background: url(#mcHatch);
-}
-
-.wallDividerLabel {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 0 18px;
-  font-size: 9px;
-  letter-spacing: 0.34em;
-  color: var(--meta);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
 /* SELECTED WORK */
 .work {
   scroll-margin-top: 80px;
-  padding: 50px 6vw 90px;
+  padding: clamp(80px, 12vh, 124px) 6vw 90px;
 }
 
 .workEyebrowWrap {
@@ -387,16 +360,6 @@
   .heroPhilosophy {
     padding-left: 24px;
     padding-right: 24px;
-  }
-
-  .wallDivider {
-    margin-bottom: 28px;
-  }
-
-  .wallDividerLabel {
-    white-space: normal;
-    text-align: center;
-    max-width: 70vw;
   }
 
   .work,

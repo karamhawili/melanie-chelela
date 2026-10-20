@@ -4,6 +4,7 @@ import { plateType } from "./objects/plate";
 import { pdfPlateType } from "./objects/pdfPlate";
 import { factType } from "./objects/fact";
 import { serviceItemType } from "./objects/serviceItem";
+import { titleLineType } from "./objects/titleLine";
 
 import { caseStudyHeroType } from "./blocks/caseStudyHero";
 import { fullBleedImageType } from "./blocks/fullBleedImage";
@@ -36,6 +37,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     pdfPlateType,
     factType,
     serviceItemType,
+    titleLineType,
     materialItemType,
     furniturePieceType,
     // blocks

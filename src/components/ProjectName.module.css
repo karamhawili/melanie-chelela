@@ -1,0 +1,16 @@
+.line {
+  display: block;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.gold {
+  color: var(--g);
+}
+
+.goldItalic {
+  font-style: italic;
+  color: var(--g);
+}

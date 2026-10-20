@@ -10,6 +10,7 @@ import Parallax from "@/components/Parallax";
 import BeforeAfter from "@/components/BeforeAfter";
 import PlanFigure from "@/components/PlanFigure";
 import PagerLink from "@/components/PagerLink";
+import ProjectName from "@/components/ProjectName";
 import ScrollReveal from "@/components/ScrollReveal";
 import ScrollProgress from "@/components/ScrollProgress";
 import CursorLabel from "@/components/CursorLabel";
@@ -38,6 +39,7 @@ import type {
   MaterialsBlock,
   FurnitureBlock,
   CreditsBlock,
+  TitleLine,
 } from "@/sanity/lib/types";
 import styles from "./page.module.css";
 
@@ -81,8 +83,7 @@ function withItalicPhrase(text: string, italic: string) {
 
 interface HeroContent {
   eyebrow: string;
-  titleLine1: string;
-  titleLine2?: string;
+  title: TitleLine[];
   intro: string;
   facts: Fact[];
   plate: Plate;
@@ -94,6 +95,10 @@ interface HeroContent {
  * it (the opening plate in every case study so far) supplies the image and
  * is consumed, so it isn't drawn a second time below. A project without a
  * case study yet builds the same hero from its card fields.
+ *
+ * The title is the project's Display title. A hero block from before that
+ * field existed may still carry its own two lines; they're used only when
+ * the project has no Display title of its own.
  */
 function extractHero(project: Project, blocks: CaseStudyBlock[]): { hero: HeroContent; rest: CaseStudyBlock[] } {
   const heroIndex = blocks.findIndex((b) => b._type === "caseStudyHero");
@@ -103,7 +108,7 @@ function extractHero(project: Project, blocks: CaseStudyBlock[]): { hero: HeroCo
     return {
       hero: {
         eyebrow: project.tag,
-        titleLine1: project.name,
+        title: project.titleLines,
         intro: project.description,
         facts: [
           { label: "Location", value: project.location },
@@ -123,11 +128,14 @@ function extractHero(project: Project, blocks: CaseStudyBlock[]): { hero: HeroCo
 
   const rest = blocks.filter((b, i) => i !== heroIndex && (openingPlate === null || i !== heroIndex + 1));
 
+  const legacyTitle: TitleLine[] = [];
+  if (heroBlock.titleLine1) legacyTitle.push({ text: heroBlock.titleLine1, style: "regular" });
+  if (heroBlock.titleLine2) legacyTitle.push({ text: heroBlock.titleLine2, style: "gold" });
+
   return {
     hero: {
       eyebrow: heroBlock.eyebrow,
-      titleLine1: heroBlock.titleLine1,
-      titleLine2: heroBlock.titleLine2,
+      title: !project.hasDisplayTitle && legacyTitle.length > 0 ? legacyTitle : project.titleLines,
       intro: heroBlock.intro,
       facts: heroBlock.facts,
       plate: openingPlate ? openingPlate.plate : cardPlate,
@@ -149,8 +157,7 @@ function HeroSection({ hero }: { hero: HeroContent }) {
             <Eyebrow rule="left" ruleWidth={48} letterSpacing="0.4em" label={hero.eyebrow} />
           </div>
           <h1 className={`${styles.intro} ${styles.heroTitle}`} style={introStyle(1)}>
-            <span className={styles.heroTitleLine}>{hero.titleLine1}</span>
-            {hero.titleLine2 && <span className={styles.heroTitleLineGold}>{hero.titleLine2}</span>}
+            <ProjectName lines={hero.title} />
           </h1>
         </div>
         <div className={styles.intro} style={introStyle(2)}>
@@ -168,9 +175,10 @@ function HeroSection({ hero }: { hero: HeroContent }) {
 
 // --- Materials & Furniture ------------------------------------------------
 //
-// Each is a wordless collage that fits one viewport: up to six items on a
-// centred canvas, placed per nth-child in the stylesheet. Names surface only
-// as the cursor label on hover.
+// Each is a collage that fits one viewport: up to six items on a centred
+// canvas, placed per nth-child in the stylesheet. A material is labelled
+// beneath its swatch with its code, name and finish; a furniture piece stays
+// wordless and names itself only as the cursor label on hover.
 
 const COLLAGE_LIMIT = 6;
 
@@ -185,21 +193,29 @@ function MaterialsSection({ block }: { block: MaterialsBlock }) {
             duration={1}
             delay={i * 0.07}
             className={`${styles.collageItem} ${styles.material}`}
-            data-cursor-label={[material.code, material.name].filter(Boolean).join(" — ")}
           >
-            <div className={styles.swatchFrame}>
-              <div className={styles.swatch} style={material.image ? undefined : { background: material.tone }}>
-                {material.image && (
-                  <Image
-                    src={material.image.src}
-                    alt={material.image.alt}
-                    fill
-                    sizes="(min-width: 768px) 30vw, 45vw"
-                    style={{ objectFit: "cover" }}
-                  />
-                )}
+            <figure className={styles.materialFigure}>
+              <div className={styles.swatchFrame}>
+                <div className={styles.swatch} style={material.image ? undefined : { background: material.tone }}>
+                  {material.image && (
+                    <Image
+                      src={material.image.src}
+                      alt={material.image.alt}
+                      fill
+                      sizes="(min-width: 768px) 30vw, 45vw"
+                      style={{ objectFit: "cover" }}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+              <figcaption className={styles.swatchCaption}>
+                <span className={styles.swatchTitle}>
+                  {material.code && <span className={styles.swatchCode}>{material.code}</span>}
+                  <span className={styles.swatchName}>{material.name}</span>
+                </span>
+                {material.finish && <span className={styles.swatchFinish}>{material.finish}</span>}
+              </figcaption>
+            </figure>
           </ScrollReveal>
         ))}
       </div>
@@ -596,7 +612,7 @@ export default async function ProjectPage({ params }: PageParams) {
           href={`/works/${next.slug}`}
           arrow="right"
           label="Next Project"
-          title={next.name}
+          title={<ProjectName lines={next.titleLines} />}
           align="end"
           padding="clamp(44px, 8vh, 92px) clamp(24px, 5vw, 72px)"
           gap="clamp(16px, 2.4vh, 26px)"
