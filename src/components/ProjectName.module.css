@@ -1,25 +1,30 @@
+/* Size is the product of the editor's step (--scale) and a per-face
+   correction (--face), both relative to the heading's own size so each
+   surface's scale carries through. */
 .line {
   display: block;
+  font-size: calc(var(--scale, 1) * var(--face, 1) * 1em);
 }
 
-.italic {
-  font-style: italic;
-}
-
-.gold {
-  color: var(--g);
-}
-
+/* Italiana has no italic; Cormorant's true italic stands in, nudged up a
+   little because its x-height sits lower. */
+.italic,
 .goldItalic {
+  font-family: var(--font-cormorant-italic), serif;
   font-style: italic;
+  font-weight: 500;
+  --face: 1.08;
+}
+
+.gold,
+.goldItalic {
   color: var(--g);
 }
 
-/* Relative to the heading's size, so each surface's own scale carries through. */
 .small {
-  font-size: 0.64em;
+  --scale: 0.64;
 }
 
 .large {
-  font-size: 1.3em;
+  --scale: 1.3;
 }
