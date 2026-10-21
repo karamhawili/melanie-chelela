@@ -23,7 +23,7 @@ export default async function PublicLayout({ children }: Readonly<{ children: Re
 
   return (
     <div className={`${signature.variable} ${styles.shell}`}>
-      <LoadingSignature name={settings.wordmark || "Melanie Chlela"} caption="Interior Architecture" />
+      <LoadingSignature name={settings.wordmark || "Melanie Chlela"} caption="Interior Designer" />
       {children}
     </div>
   );

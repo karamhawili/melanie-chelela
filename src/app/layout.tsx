@@ -30,9 +30,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Melanie Chelela — Interior Architecture",
+  title: "Melanie Chelela — Interior Designer",
   description:
-    "Studio Melanie Chelela, an interior-architecture practice based in Beirut, Lebanon.",
+    "Studio Melanie Chelela, an interior design practice based in Beirut, Lebanon.",
   robots: { index: false, follow: false },
 };
 
