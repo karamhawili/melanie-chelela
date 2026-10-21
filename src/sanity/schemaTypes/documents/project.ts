@@ -12,6 +12,17 @@ export const projectType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "displayTitle",
+      title: "Display title",
+      description:
+        "How the name is set in display type everywhere it appears — the case study hero, the Works index, " +
+        "the home cards and the pager. One entry per line; each line can be upright, italic or gold, and " +
+        "small, regular or large relative to the surface it's on. Leave empty to set the Title on one line.",
+      type: "array",
+      of: [defineArrayMember({ type: "titleLine" })],
+      validation: (rule) => rule.max(3),
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",

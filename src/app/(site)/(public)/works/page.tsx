@@ -10,6 +10,7 @@ import Parallax from "@/components/Parallax";
 import ScrollReveal from "@/components/ScrollReveal";
 import ScrollProgress from "@/components/ScrollProgress";
 import CursorLabel from "@/components/CursorLabel";
+import ProjectName from "@/components/ProjectName";
 import FilmGrain from "@/components/FilmGrain";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECTS_QUERY, WORKS_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
@@ -61,7 +62,7 @@ function FullBleedProject({ project, priority }: { project: Project; priority?: 
               <Eyebrow number={project.n} rule="left" label={project.tag} />
             </ScrollReveal>
             <ScrollReveal as="h2" y={18} duration={1} delay={0.05} className={styles.fullBleedTitle}>
-              {project.name}
+              <ProjectName lines={project.titleLines} />
             </ScrollReveal>
           </div>
           <ScrollReveal y={18} duration={1} delay={0.12}>
@@ -96,7 +97,9 @@ function TwoUpProject({ project, reverse = false }: { project: Project; reverse?
           className={reverse ? styles.orderFirst : styles.orderLast}
         >
           <Eyebrow number={project.n} rule="left" label={project.tag} />
-          <h2 className={styles.twoUpTitle}>{project.name}</h2>
+          <h2 className={styles.twoUpTitle}>
+            <ProjectName lines={project.titleLines} />
+          </h2>
           <p className={styles.twoUpDescription}>{project.description}</p>
           <div className={styles.twoUpMetaRow}>
             <FactItem label="Location" value={project.location} {...META_PROPS} />

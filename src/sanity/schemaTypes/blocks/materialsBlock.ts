@@ -24,7 +24,7 @@ export const materialItemType = defineType({
       name: "finish",
       title: "Finish & use",
       type: "string",
-      description: 'e.g. "Honed · Floors". Shown with the name on hover.',
+      description: 'e.g. "Honed · Floors". Shown beneath the swatch, under the code and name.',
     }),
     defineField({
       name: "tone",
@@ -66,7 +66,7 @@ export const materialsBlockType = defineType({
   name: "materialsBlock",
   title: "Materials",
   type: "object",
-  description: "A wordless, one-screen collage of up to six material swatches.",
+  description: "A one-screen collage of up to six material swatches, each labelled with its code, name and finish.",
   fields: [
     defineField({
       name: "items",

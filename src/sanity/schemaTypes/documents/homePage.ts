@@ -34,13 +34,6 @@ export const homePageType = defineType({
       ],
     }),
     defineField({
-      name: "wallDividerText",
-      title: "Wall divider text",
-      type: "string",
-      initialValue: "Interiors, Drawn to the Millimetre",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: "philosophyHeading",
       title: "Philosophy heading",
       type: "text",

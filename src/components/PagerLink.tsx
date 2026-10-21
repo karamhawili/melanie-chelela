@@ -1,10 +1,12 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import styles from "./PagerLink.module.css";
 
 interface PagerLinkProps {
   href: string;
   label: string;
-  title: string;
+  /** A string, or a project's display-title lines (they keep this cell's size). */
+  title: ReactNode;
   arrow: "left" | "right";
   /** "row" = All Works' single full-width cell; "column" = Terra Mare's prev/next cells. */
   layout?: "row" | "column";
